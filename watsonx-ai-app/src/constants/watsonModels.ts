@@ -6,4 +6,6 @@ export const WATSON_MODELS = {
     GRANITE_8B_CODE_INSTRUCT: 'ibm/granite-8b-code-instruct',
     GRANITE_20B_CODE_INSTRUCT: 'ibm/granite-20b-code-instruct',
     GRANITE_34B_CODE_INSTRUCT: 'ibm/granite-34b-code-instruct',
-  };
+  } as const;
+  
+  export type WatsonModelId = keyof typeof WATSON_MODELS;

@@ -4,6 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Color Variables */
 :root {
   --app-container: #f3f6fd;
   --main-color: #1f1c2e;
@@ -22,8 +23,12 @@
   --search-area-bg: #fff;
   --star: #1ff1c2e;
   --message-btn: #fff;
+  --transition-speed: 0.3s;
+  --sidebar-width: 250px;
+  --sidebar-width-collapsed: 80px;
 }
 
+/* Dark Mode Colors */
 .dark {
   --app-container: #1f1d2b;
   --main-color: #fff;
@@ -44,6 +49,7 @@
   --message-btn: rgba(195, 207, 244, 0.1);
 }
 
+/* Base Styles */
 @layer base {
   html, body {
     @apply w-full h-screen m-0 overflow-hidden;
@@ -51,16 +57,21 @@
 
   body {
     @apply font-['DM_Sans',sans-serif] flex justify-center bg-[var(--app-container)];
+    transition: background-color var(--transition-speed) ease;
   }
 }
 
+/* Component Styles */
 @layer components {
+  /* App Container */
   .app-container {
     @apply w-full flex flex-col h-full bg-[var(--app-container)] transition-all duration-200 max-w-[1800px];
   }
 
+  /* Header */
   .app-header {
-    @apply flex justify-between items-center w-full p-4 relative;
+    @apply flex justify-between items-center w-full p-4 bg-[var(--projects-section)] shadow-md z-10;
+    transition: background-color var(--transition-speed) ease;
   }
 
   .app-header-left, .app-header-right {
@@ -76,40 +87,229 @@
   }
 
   .app-name {
-    @apply text-[var(--main-color)] text-xl font-bold mx-8;
+    @apply text-[var(--main-color)] text-2xl font-bold mx-8;
+    transition: color var(--transition-speed) ease;
   }
 
+  /* Mode Switch */
   .mode-switch {
-    @apply bg-transparent border-none p-0 text-[var(--main-color)] flex justify-center items-center;
+    @apply bg-transparent border-none p-2 text-[var(--main-color)] rounded-full hover:bg-[var(--link-color-hover)];
+    transition: all var(--transition-speed) ease;
   }
 
+  /* Search */
   .search-wrapper {
-    @apply rounded-[20px] bg-[var(--search-area-bg)] pr-3 h-10 flex justify-between items-center w-full max-w-[480px] text-[var(--light-font)] shadow-[0_2px_6px_0_rgba(136,148,171,0.2),0_24px_20px_-24px_rgba(71,82,107,0.1)] overflow-hidden;
-  }
-
-  .dark .search-wrapper {
-    @apply shadow-none;
+    @apply rounded-full bg-[var(--search-area-bg)] pr-3 h-10 flex justify-between items-center w-full max-w-[480px] text-[var(--light-font)] shadow-md overflow-hidden;
+    transition: all var(--transition-speed) ease;
   }
 
   .search-input {
     @apply border-none flex-1 outline-none h-full px-5 text-base bg-[var(--search-area-bg)] text-[var(--main-color)];
+    transition: all var(--transition-speed) ease;
   }
 
   .search-input::placeholder {
     @apply text-[var(--main-color)] opacity-60;
+    transition: color var(--transition-speed) ease;
   }
 
+  /* Add Button */
   .add-btn {
-    @apply text-white bg-[var(--button-bg)] p-0 border-0 rounded-full w-8 h-8 flex items-center justify-center;
+    @apply text-white bg-[var(--button-bg)] p-2 border-0 rounded-full flex items-center justify-center;
+    transition: all var(--transition-speed) ease;
   }
 
-  /* Add more component classes as needed */
+  /* App Content */
+  .app-content {
+    @apply flex flex-1 overflow-hidden;
+  }
+
+  /* Sidebar */
+  .app-sidebar {
+    @apply flex-shrink-0 bg-[var(--projects-section)] h-full overflow-hidden transition-all duration-300 ease-in-out;
+    width: var(--sidebar-width);
+  }
+
+  .app-sidebar.collapsed {
+    width: var(--sidebar-width-collapsed);
+  }
+
+  .sidebar-link {
+    @apply flex items-center p-4 text-[var(--main-color)] hover:bg-[var(--link-color-hover)] transition-all duration-200;
+  }
+
+  .sidebar-link-text {
+    @apply ml-4 transition-opacity duration-200;
+  }
+
+  .app-sidebar.collapsed .sidebar-link-text {
+    @apply opacity-0;
+  }
+
+  /* Main Content */
+  .main-content {
+    @apply flex-grow p-6 overflow-auto;
+  }
+
+  /* Projects Section */
+  .projects-section {
+    @apply bg-[var(--projects-section)] rounded-[32px] p-8 shadow-lg;
+    transition: background-color var(--transition-speed) ease;
+  }
+
+  .projects-section-header {
+    @apply flex justify-between items-center mb-6;
+  }
+
+  .projects-section-line {
+    @apply flex justify-between items-center mb-6;
+  }
+
+  .projects-status {
+    @apply flex space-x-4;
+  }
+
+  .item-status {
+    @apply flex flex-col items-center;
+  }
+
+  .status-number {
+    @apply text-2xl font-bold text-blue-600 dark:text-blue-400;
+  }
+
+  .status-type {
+    @apply text-sm text-gray-500 dark:text-gray-400;
+  }
+
+  /* View Actions */
+  .view-actions {
+    @apply flex space-x-2;
+  }
+
+  .view-btn {
+    @apply p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200;
+  }
+
+  .view-btn.active {
+    @apply bg-blue-500 text-white;
+  }
+
+  /* Project Boxes */
+  .project-boxes {
+    @apply grid gap-6;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .project-box-wrapper {
+    @apply transition-transform duration-200 ease-in-out;
+  }
+
+  .project-box {
+    @apply bg-white dark:bg-gray-800 rounded-[20px] p-6 shadow-md;
+    transition: all var(--transition-speed) ease;
+  }
+
+  .project-box:hover {
+    @apply shadow-lg transform -translate-y-1;
+  }
+
+  /* Messages Section */
+  .messages-section {
+    @apply flex-shrink-0 w-80 bg-[var(--projects-section)] p-4 transition-transform duration-300 ease-in-out;
+  }
+
+  /* AI Insights Section */
+  .ai-insights-section {
+    @apply mt-8 bg-[var(--projects-section)] rounded-[30px] p-6;
+    transition: background-color var(--transition-speed) ease, opacity 0.3s ease;
+  }
+
+  /* Messages Button */
+  .messages-btn {
+    @apply fixed bottom-6 right-6 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200;
+  }
 }
 
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideInFromLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .app-content {
+    @apply flex-col;
+  }
+
+  .app-sidebar {
+    @apply w-full order-first;
+  }
+
+  .projects-section {
+    @apply mt-4;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    @apply flex-col items-start;
+  }
+
+  .app-header-right {
+    @apply mt-4;
+  }
+
+  .search-wrapper {
+    @apply max-w-full;
+  }
+
+  .project-boxes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Utility Classes */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 
-  /* Add more custom utility classes as needed */
-}
+  .transition-all-ease {
+    transition: all var(--transition-speed) ease;
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-200;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .focus-outline {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+  }
+} 

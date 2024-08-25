@@ -1,0 +1,175 @@
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .project-list.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .project-item {
+    background-color: var(--card-bg-color, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .project-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .project-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary, #333333);
+    margin-bottom: 0.5rem;
+  }
+  
+  .project-status {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #666666);
+    margin-bottom: 1rem;
+  }
+  
+  .progress-bar {
+    background-color: var(--progress-bg-color, #e0e0e0);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  
+  .progress-bar-inner {
+    background-color: var(--progress-fill-color, #4caf50);
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  .project-due-date {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #666666);
+  }
+  
+  .project-list.list .project-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+  }
+  
+  .project-list.list .project-name {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  
+  .project-list.list .project-status {
+    flex: 1;
+    margin-bottom: 0;
+  }
+  
+  .project-list.list .progress-bar {
+    flex: 2;
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+  
+  .project-list.list .project-due-date {
+    flex: 1;
+    text-align: right;
+  }
+  
+  @media (max-width: 768px) {
+    .project-list.grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .project-list.list .project-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .project-list.list .project-name,
+    .project-list.list .project-status,
+    .project-list.list .progress-bar,
+    .project-list.list .project-due-date {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+  
+    .project-list.list .project-due-date {
+      text-align: left;
+    }
+  }
+  
+  /* Dark mode styles */
+  @media (prefers-color-scheme: dark) {
+    .project-item {
+      background-color: var(--card-bg-color-dark, #2a2a2a);
+    }
+  
+    .project-name {
+      color: var(--text-primary-dark, #ffffff);
+    }
+  
+    .project-status,
+    .project-due-date {
+      color: var(--text-secondary-dark, #b0b0b0);
+    }
+  
+    .progress-bar {
+      background-color: var(--progress-bg-color-dark, #444444);
+    }
+  
+    .progress-bar-inner {
+      background-color: var(--progress-fill-color-dark, #66bb6a);
+    }
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .project-item {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .project-item {
+      transition: none;
+      animation: none;
+    }
+  
+    .progress-bar-inner {
+      transition: none;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .project-list {
+      display: block;
+    }
+  
+    .project-item {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      border: 1px solid #000;
+      box-shadow: none;
+    }
+  
+    .progress-bar {
+      border: 1px solid #000;
+    }
+  
+    .progress-bar-inner {
+      background-color: #000;
+    }
+  }
