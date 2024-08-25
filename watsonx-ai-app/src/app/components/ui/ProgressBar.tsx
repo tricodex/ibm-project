@@ -1,34 +1,38 @@
-import React from 'react'
+import * as React from "react"
+import { cn } from "@/lib/utils"
 
-interface ProgressBarProps {
+interface ProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   progress: number
-  color?: string
-  height?: number
+  max?: number
   showPercentage?: boolean
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({
-  progress,
-  color = 'bg-blue-500',
-  height = 4,
-  showPercentage = false,
-}) => {
-  const percentage = Math.min(Math.max(progress, 0), 100)
+const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
+  ({ className, progress, max = 100, showPercentage = false, ...props }, ref) => {
+    const percentage = Math.round((progress / max) * 100)
 
-  return (
-    <div className="relative pt-1">
-      <div className={`overflow-hidden h-${height} mb-4 text-xs flex rounded bg-gray-200`}>
+    return (
+      <div className="space-y-2">
         <div
-          className={`${color} w-[${percentage}%] shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center`}
-        ></div>
-      </div>
-      {showPercentage && (
-        <div className="flex justify-between text-xs text-gray-600">
-          <span>{percentage.toFixed(0)}% Complete</span>
+          ref={ref}
+          className={cn("h-2 w-full overflow-hidden rounded-full bg-secondary", className)}
+          {...props}
+        >
+          <div
+            className="h-full bg-primary transition-all"
+            style={{ width: `${percentage}%` }}
+          />
         </div>
-      )}
-    </div>
-  )
-}
+        {showPercentage && (
+          <div className="text-sm text-muted-foreground text-right">
+            {percentage}%
+          </div>
+        )}
+      </div>
+    )
+  }
+)
 
-export default ProgressBar
+ProgressBar.displayName = "ProgressBar"
+
+export { ProgressBar }

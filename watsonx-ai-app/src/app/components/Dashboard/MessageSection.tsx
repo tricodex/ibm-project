@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useWatson } from '@/hooks/useWatson';
+import { FiSend, FiX, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import styles from './MessageSection.module.css'; // Assuming you create a CSS module for styling
 
 interface Message {
   id: string;
@@ -14,6 +16,7 @@ const MessageSection: React.FC = () => {
     { id: '1', sender: 'AI Assistant', content: 'How can I help you with your coding project today?', timestamp: new Date().toISOString() },
   ]);
   const [newMessage, setNewMessage] = useState('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleSendMessage = async () => {
     if (newMessage.trim() === '') return;
@@ -25,7 +28,7 @@ const MessageSection: React.FC = () => {
       timestamp: new Date().toISOString(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setNewMessage('');
 
     // Generate AI response
@@ -37,44 +40,52 @@ const MessageSection: React.FC = () => {
       timestamp: new Date().toISOString(),
     };
 
-    setMessages(prev => [...prev, aiMessage]);
+    setMessages((prev) => [...prev, aiMessage]);
   };
 
   return (
-    <div className="messages-section">
-      <button className="messages-close">
-        {/* Add close icon */}
-      </button>
-      <div className="projects-section-header">
-        <p>AI Coding Assistant</p>
+    <div className={`${styles.messageSection} ${isCollapsed ? styles.collapsed : ''}`}>
+      <div className={styles.header}>
+        <p className={styles.title}>AI Coding Assistant</p>
+        <div className={styles.controls}>
+          <button className={styles.collapseButton} onClick={() => setIsCollapsed(!isCollapsed)}>
+            {isCollapsed ? <FiChevronDown size={20} /> : <FiChevronUp size={20} />}
+          </button>
+          <button className={styles.closeButton} aria-label="Close">
+            <FiX size={20} />
+          </button>
+        </div>
       </div>
-      <div className="messages">
-        {messages.map((message) => (
-          <div key={message.id} className="message-box">
-            <div className="message-content">
-              <div className="message-header">
-                <div className="name">{message.sender}</div>
+      {!isCollapsed && (
+        <>
+          <div className={styles.messagesContainer}>
+            {messages.map((message) => (
+              <div key={message.id} className={message.sender === 'You' ? styles.userMessageBox : styles.aiMessageBox}>
+                <div className={styles.messageContent}>
+                  <div className={styles.messageHeader}>
+                    <span className={styles.senderName}>{message.sender}</span>
+                    <span className={styles.messageTime}>{new Date(message.timestamp).toLocaleTimeString()}</span>
+                  </div>
+                  <p className={styles.messageText}>{message.content}</p>
+                </div>
               </div>
-              <p className="message-line">
-                {message.content}
-              </p>
-              <p className="message-line time">
-                {new Date(message.timestamp).toLocaleTimeString()}
-              </p>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="messages-input">
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-        />
-        <button onClick={handleSendMessage}>Send</button>
-      </div>
+          <div className={styles.inputContainer}>
+            <input
+              type="text"
+              placeholder="Type your message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              className={styles.inputField}
+            />
+            <button onClick={handleSendMessage} className={styles.sendButton} title="Send">
+              <FiSend size={20} />
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

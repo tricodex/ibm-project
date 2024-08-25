@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { MoonIcon, SunIcon, MenuIcon, SearchIcon } from 'lucide-react'
-import Button from '@/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 
 interface HeaderProps {
   isDarkMode: boolean
@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode, toggleSideb
             <button onClick={toggleSidebar} className="text-gray-500 focus:outline-none lg:hidden" title="Toggle Sidebar">
               <MenuIcon className="h-6 w-6" />
             </button>
-            <h1 className="text-xl font-semibold text-gray-700 dark:text-white ml-4">AI-Powered Coding Dashboard</h1>
+            <h1 className="text-xl font-semibold text-gray-700 dark:text-white ml-4">Granite Board</h1>
           </div>
           <div className="flex-1 max-w-xl mx-4">
             <form onSubmit={handleSearch} className="relative">
