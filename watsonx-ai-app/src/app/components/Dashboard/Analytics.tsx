@@ -57,8 +57,9 @@ const Analytics: React.FC = () => {
   const fetchAIInsights = useCallback(async () => {
     setIsLoading(true);
     try {
-      const insights = await generateProjectInsights(`Provide insights for ${selectedProject === 'all' ? 'all projects' : selectedProject}`);
-      setAiInsights(insights);
+      // const insights = await generateProjectInsights(`Provide insights for ${selectedProject === 'all' ? 'all projects' : selectedProject}`);
+      // setAiInsights(insights);
+      
     } catch (error) {
       console.error('Error fetching AI insights:', error);
     } finally {

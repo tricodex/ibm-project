@@ -170,7 +170,7 @@ const Tasks: React.FC = () => {
       Suggest a suitable tech stack based on the project requirements, with pros and cons.
     `;
     await handleAIOperation(
-      () => suggestTechStack(projectRequirements, 'GRANITE_13B_INSTRUCT_V2', systemPrompt),
+      () => suggestTechStack(projectRequirements, 'GRANITE_34B_CODE_INSTRUCT', systemPrompt),
       'Tech stack suggestion received!'
     );
   }, [tasks, suggestTechStack, handleAIOperation]);
@@ -181,7 +181,7 @@ const Tasks: React.FC = () => {
       Generate a set of test cases, including edge cases, for the listed functionality.
     `;
     await handleAIOperation(
-      () => generateTestCases(functionality, 'GRANITE_13B_INSTRUCT_V2', systemPrompt),
+      () => generateTestCases(functionality, 'GRANITE_34B_CODE_INSTRUCT', systemPrompt),
       'Test cases generated successfully!'
     );
   }, [tasks, generateTestCases, handleAIOperation]);

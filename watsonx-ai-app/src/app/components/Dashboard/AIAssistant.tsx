@@ -186,8 +186,14 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onGenerateInsights }) => {
                       <SelectValue placeholder="Select model" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="GRANITE_13B_CHAT_V2">GRANITE 13B Chat V2</SelectItem>
-                      <SelectItem value="GRANITE_13B_INSTRUCT_V1">GRANITE 13B Instruct V1</SelectItem>
+
+                      <SelectItem value="GRANITE_13B_CHAT_V2">ibm/granite-13b-chat-v2</SelectItem>
+                      <SelectItem value="GRANITE_13B_INSTRUCT_V2">ibm/granite-13b-instruct-v2</SelectItem>
+                      <SelectItem value="GRANITE_20B_MULTILINGUAL">ibm/granite-20b-multilingual</SelectItem>
+                      <SelectItem value="GRANITE_3B_CODE_INSTRUCT">ibm/granite-3b-code-instruct</SelectItem>
+                      <SelectItem value="GRANITE_8B_CODE_INSTRUCT">ibm/granite-8b-code-instruct</SelectItem>
+                      <SelectItem value="GRANITE_20B_CODE_INSTRUCT">ibm/granite-20b-code-instruct</SelectItem>
+                      <SelectItem value="GRANITE_34B_CODE_INSTRUCT">ibm/granite-34b-code-instruct</SelectItem>
                     </SelectContent>
                   </Select>
                   <div>
