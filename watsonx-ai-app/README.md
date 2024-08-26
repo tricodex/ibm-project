@@ -41,8 +41,8 @@ To run Granix locally, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/granix.git
-   cd granix
+   cd ibm-project
+   cd watsonx-ai-app
    ```
 
 2. Install dependencies using pnpm:
