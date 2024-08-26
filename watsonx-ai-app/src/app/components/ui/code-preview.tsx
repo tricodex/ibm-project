@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, Code } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import Editor from '@monaco-editor/react';
 import { cn } from '@/lib/utils';
 

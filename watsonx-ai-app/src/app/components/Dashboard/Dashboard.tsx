@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import Calendar from '@/components/ui/calendar';
+import Calendar from '@/app/components/ui/calendar';
 import { FiFolder, FiList, FiBarChart2, FiCode, FiStar, FiPlus } from 'react-icons/fi';
 import MessageSection from './MessageSection';
 

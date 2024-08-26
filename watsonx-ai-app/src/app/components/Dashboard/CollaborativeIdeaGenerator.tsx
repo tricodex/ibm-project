@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useWatson } from '@/hooks/useWatson';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
 import { FiUsers, FiZap, FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 
 interface Idea {

@@ -5,13 +5,13 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
 import Textarea from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { ToastProvider, Toast } from '@/components/ui/toast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/app/components/ui/tabs';
+import { ToastProvider, Toast } from '@/app/components/ui/toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tree } from '@/components/ui/tree';
 import { CodePreview } from '@/components/ui/code-preview';

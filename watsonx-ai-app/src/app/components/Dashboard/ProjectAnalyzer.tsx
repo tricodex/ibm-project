@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useWatson } from '@/hooks/useWatson';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Card } from '@/app/components/ui/card';
 import { FiActivity, FiClock, FiList, FiServer } from 'react-icons/fi';
 
 interface Project {

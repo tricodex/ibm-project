@@ -4,13 +4,13 @@ import {
   CardHeader, 
   CardTitle, 
   CardContent,
-} from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+} from '@/app/components/ui/card';
+import { Switch } from '@/app/components/ui/switch';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/app/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Input } from '@/app/components/ui/input';
+import { Button } from '@/app/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/app/components/ui/tabs';
 import { FiMoon, FiSun, FiGlobe, FiBell, FiLock, FiUser, FiSave } from 'react-icons/fi';
 
 const Settings: React.FC = () => {
