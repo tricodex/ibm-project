@@ -1,9 +1,9 @@
 'use client';
 import React from 'react'
-import Projects from '@/components/Dashboard/Projects'
+import AIInsights from '@/components/Dashboard/AIInsights'
 import Sidebar from '../components/Layout/Sidebar'
 
-const ProjectsPage: React.FC = () => {
+const AIInsightsPage: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false)
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed)
   
@@ -14,10 +14,12 @@ const ProjectsPage: React.FC = () => {
         toggleSidebar={toggleSidebar}
       />
       <div className={`flex-1 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
-        <Projects />
+        <AIInsights insight={''} onRefresh={function (): void {
+                  throw new Error('Function not implemented.');
+              } } isLoading={false} />
       </div>
     </div>
   )
 }
 
-export default ProjectsPage
+export default AIInsightsPage

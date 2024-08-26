@@ -1,80 +1,66 @@
-// src/components/ui/code-preview.tsx
-"use client"
-
-import React, { useState } from 'react'
-import { Check, Copy } from 'lucide-react'
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import React, { useState } from 'react';
+import { Eye, Code } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Editor from '@monaco-editor/react';
+import { cn } from '@/lib/utils';
 
 interface CodePreviewProps {
-  html: string
-  css: string
-  js: string
-  preview: React.ReactNode
+  html: string;
+  css: string;
+  js: string;
+  preview: React.ReactNode;
 }
 
 export function CodePreview({ html, css, js, preview }: CodePreviewProps) {
-  const [copied, setCopied] = useState<'html' | 'css' | 'js' | null>(null)
-
-  const onCopy = async (type: 'html' | 'css' | 'js', code: string) => {
-    await navigator.clipboard.writeText(code)
-    setCopied(type)
-    setTimeout(() => setCopied(null), 2000)
-  }
+  const [activeTab, setActiveTab] = useState<'preview' | 'html' | 'css' | 'js'>('preview');
 
   return (
-    <div className="rounded-lg border bg-background shadow">
-      <div className="p-4 border-b">
-        <h3 className="font-semibold">Preview</h3>
-        <div className="mt-2">{preview}</div>
-      </div>
-      <Tabs defaultValue="html" className="p-4">
-        <TabsList>
-          <TabsTrigger value="html">HTML</TabsTrigger>
-          <TabsTrigger value="css">CSS</TabsTrigger>
-          <TabsTrigger value="js">JavaScript</TabsTrigger>
-        </TabsList>
-        <TabsContent value="html">
-          <CodeBlock code={html} language="html" onCopy={() => onCopy('html', html)} copied={copied === 'html'} />
-        </TabsContent>
-        <TabsContent value="css">
-          <CodeBlock code={css} language="css" onCopy={() => onCopy('css', css)} copied={copied === 'css'} />
-        </TabsContent>
-        <TabsContent value="js">
-          <CodeBlock code={js} language="javascript" onCopy={() => onCopy('js', js)} copied={copied === 'js'} />
-        </TabsContent>
+    <div className="rounded-lg overflow-hidden bg-gray-900 shadow-xl">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'preview' | 'html' | 'css' | 'js')}>
+        <div className="flex justify-between items-center px-4 py-2 bg-gray-800">
+          <TabsList className="grid w-full grid-cols-4 gap-2 bg-gray-700 p-1 rounded-md">
+            {[
+              { value: 'preview', icon: Eye, label: 'Preview' },
+              { value: 'html', icon: Code, label: 'HTML' },
+              { value: 'css', icon: Code, label: 'CSS' },
+              { value: 'js', icon: Code, label: 'JS' },
+              
+
+            ].map(({ value, icon: Icon, label }) => (
+              <TabsTrigger
+                key={value}
+                value={value}
+                className={cn(
+                  'flex items-center justify-center px-3 py-1.5 text-sm font-medium transition-all duration-200',
+                  activeTab === value ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-white'
+                )}
+              >
+                <Icon className="w-4 h-4 mr-2" /> {label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
+        <div className="relative overflow-hidden">
+          {/* <TabsContent value="preview" className={cn("p-4 bg-white dark:bg-gray-800 min-h-[200px]", activeTab === 'preview' ? 'block' : 'hidden')}>
+            {preview}
+          </TabsContent> */}
+          <TabsContent value="preview" className={activeTab === 'preview' ? 'block' : 'hidden'}>
+            <Editor height="300px" language="html" theme="vs-dark" value={html} />
+          </TabsContent>
+          <TabsContent value="html" className={activeTab === 'html' ? 'block' : 'hidden'}>
+            <Editor height="300px" language="html" theme="vs-dark" value={html} />
+          </TabsContent>
+          <TabsContent value="css" className={activeTab === 'css' ? 'block' : 'hidden'}>
+            <Editor height="300px" language="css" theme="vs-dark" value={css} />
+          </TabsContent>
+          <TabsContent value="js" className={activeTab === 'js' ? 'block' : 'hidden'}>
+            <Editor height="300px" language="javascript" theme="vs-dark" value={js} />
+          </TabsContent>
+        </div>
       </Tabs>
     </div>
-  )
+  );
 }
 
-interface CodeBlockProps {
-  code: string
-  language: string
-  onCopy: () => void
-  copied: boolean
-}
-
-function CodeBlock({ code, language, onCopy, copied }: CodeBlockProps) {
-  return (
-    <div className="relative">
-      <pre className={cn(
-        "px-4 py-3 font-mono text-sm rounded bg-muted overflow-x-auto",
-        language === 'html' && "language-html",
-        language === 'css' && "language-css",
-        language === 'javascript' && "language-javascript"
-      )}>
-        <code>{code}</code>
-      </pre>
-      <Button
-        size="icon"
-        variant="ghost"
-        className="absolute top-2 right-2"
-        onClick={onCopy}
-      >
-        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-      </Button>
-    </div>
-  )
-}
+export default CodePreview;

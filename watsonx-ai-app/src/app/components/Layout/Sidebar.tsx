@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   HomeIcon, 
   FolderIcon, 
@@ -11,7 +13,6 @@ import {
   SettingsIcon,
   HelpCircleIcon,
   GitMerge,
-
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -21,7 +22,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
-  const [activeItem, setActiveItem] = useState('Dashboard');
+  const pathname = usePathname();  // use usePathname from next/navigation
+  const [activeItem, setActiveItem] = useState('');
 
   const sidebarItems = [
     { icon: HomeIcon, text: 'Dashboard', href: '/dashboard' },
@@ -33,11 +35,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
     { icon: SettingsIcon, text: 'Settings', href: '/settings' },
   ];
 
+  useEffect(() => {
+    // Set activeItem based on the current pathname
+    const currentItem = sidebarItems.find(item => item.href === pathname);
+    if (currentItem) {
+      setActiveItem(currentItem.text);
+    }
+  }, [pathname]);
+
   return (
     <aside className={`fixed top-0 left-0 h-full z-50 transition-all duration-300 bg-gray-900 text-white ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between p-4">
-          <div className="flex items-center">
+        <Link href="/" className="flex items-center">
             <div className="w-11 h-11 bg-blue-500 rounded-lg flex items-center justify-center text-xl font-bold mr-3">
               <Image
                 src="/granix6.png"
@@ -47,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
               />
             </div>
             {!isCollapsed && <h1 className="app-name">granix</h1>}
-          </div>
+          </Link>
           <button onClick={toggleSidebar} className="text-gray-400 hover:text-white transition-colors duration-200">
             {isCollapsed ? <ChevronRightIcon size={24} /> : <ChevronLeftIcon size={24} />}
           </button>
@@ -61,7 +71,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
               className={`flex items-center py-3 px-4 text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200
                 ${activeItem === item.text ? 'bg-gray-800 text-white' : ''}
                 ${isCollapsed ? 'justify-center' : ''}`}
-              onClick={() => setActiveItem(item.text)}
             >
               <item.icon className={`h-6 w-6 ${isCollapsed ? 'mr-0' : 'mr-4'}`} />
               {!isCollapsed && <span>{item.text}</span>}

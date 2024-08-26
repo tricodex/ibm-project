@@ -1,9 +1,9 @@
 'use client';
 import React from 'react'
-import Projects from '@/components/Dashboard/Projects'
+import CodeReviewAssistant from '@/components/Dashboard/CodeReviewAssistant'
 import Sidebar from '../components/Layout/Sidebar'
 
-const ProjectsPage: React.FC = () => {
+const CodeReviewAssistantPage: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false)
   const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed)
   
@@ -14,10 +14,10 @@ const ProjectsPage: React.FC = () => {
         toggleSidebar={toggleSidebar}
       />
       <div className={`flex-1 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
-        <Projects />
+        <CodeReviewAssistant />
       </div>
     </div>
   )
 }
 
-export default ProjectsPage
+export default CodeReviewAssistantPage

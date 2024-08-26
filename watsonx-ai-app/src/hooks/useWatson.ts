@@ -1,202 +1,193 @@
-import { useState } from 'react'
-import { TextGenerationParams, WatsonxResponse } from '@/types/watsonx'
-import { WatsonModelId } from '@/constants/watsonModels'
+// src/hooks/useWatson.ts
+import { useState } from 'react';
+import { TextGenerationParams, WatsonxResponse } from '@/types/watsonx';
+import { WATSON_MODELS, WatsonModelId } from '@/constants/watsonModels';
 
-// Custom hook for interacting with Watson API
+const DEFAULT_SYSTEM_PROMPTS = {
+  codeGeneration: "You are an expert code generator. Your task is to write clean, efficient, and well-documented code based on the given requirements.",
+  codeSuggestions: "You are a knowledgeable coding assistant. Provide helpful suggestions, best practices, and potential improvements for the given code or query.",
+  projectInsights: "You are a seasoned project manager and developer. Analyze the given project context and provide valuable insights, potential risks, and improvement suggestions.",
+  taskBreakdown: "You are a skilled project planner. Break down the given project description into a comprehensive list of tasks, considering all aspects of software development.",
+  projectDuration: "You are an experienced project estimator. Analyze the given tasks and provide realistic time estimates for each, along with an overall project timeline.",
+  techStack: "You are a technology consultant with broad knowledge of development tools and frameworks. Suggest the most appropriate tech stack based on the given project requirements.",
+  testCases: "You are a quality assurance expert. Generate a comprehensive list of test cases for the given functionality, covering various scenarios and edge cases."
+};
+
 export const useWatson = () => {
-  // State to manage loading status
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.debug('useWatson hook initialized with isLoading:', isLoading)
-
-  // Helper function to check if all required environment variables are available
-  const checkEnvVariables = () => {
-    const requiredEnvVars = ['NEXT_PUBLIC_WATSONX_AI_PROJECT_ID']
-    requiredEnvVars.forEach(envVar => {
-      if (process.env[envVar]) {
-        console.debug(`${envVar} is present: ${process.env[envVar]}`)
-      } else {
-        console.warn(`${envVar} is missing`)
-      }
-    })
-  }
-
-  // Function to generate text using Watson API
   const generateText = async (params: TextGenerationParams): Promise<WatsonxResponse | null> => {
-    console.debug('generateText called with params:', params)
-    setIsLoading(true)
-    console.debug('isLoading set to true')
-
+    setIsLoading(true);
     try {
-      // Ensure environment variables are checked before making the API request
-      checkEnvVariables()
-
-      console.debug('Sending request to /api/watsonx with body:', JSON.stringify(params))
       const response = await fetch('/api/watsonx', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(params),
-        next: { revalidate: 0 }, // Disable caching for this request
-      })
-
-      console.debug('Received response from /api/watsonx:', response)
+        body: JSON.stringify({
+          ...params,
+          input: `System:\n${params.systemPrompt}\n\nHuman: ${params.input}\n\nAssistant:`,
+          parameters: {
+            ...params.parameters,
+            decoding_method: "greedy",
+            max_new_tokens: Math.max(params.parameters.max_new_tokens || 0, 2048),
+            min_new_tokens: 0,
+            stop_sequences: ["\n\nHuman:", "\n\nSystem:"],
+            repetition_penalty: 1.2,
+            temperature: 0.7,
+            top_p: 0.9,
+            top_k: 50,
+          },
+        }),
+      });
 
       if (!response.ok) {
-        console.error('Response not OK. Status:', response.status, 'StatusText:', response.statusText)
-        throw new Error('Failed to generate text')
+        throw new Error('Failed to generate text');
       }
 
-      const data: WatsonxResponse = await response.json()
-      console.debug('Response JSON parsed successfully:', data)
-      return data
+      const data: WatsonxResponse = await response.json();
+      return data;
     } catch (error) {
-      console.error('Error generating text:', error)
-      return null
+      console.error('Error generating text:', error);
+      return null;
     } finally {
-      console.debug('generateText finished, setting isLoading to false')
-      setIsLoading(false)
-      console.debug('isLoading set to false')
+      setIsLoading(false);
     }
-  }
+  };
 
-  // Function to generate code snippet
-  const generateCodeSnippet = async (prompt: string, modelId: WatsonModelId = 'GRANITE_13B_CHAT_V2'): Promise<string> => {
-    console.debug('generateCodeSnippet called with prompt:', prompt, 'and modelId:', modelId)
-
+  const generateCodeSnippet = async (
+    prompt: string, 
+    modelId: WatsonModelId = 'GRANITE_34B_CODE_INSTRUCT',
+    systemPrompt: string = DEFAULT_SYSTEM_PROMPTS.codeGeneration
+  ): Promise<string> => {
     const params: TextGenerationParams = {
-      input: `Generate a code snippet for the following prompt: ${prompt}`,
+      input: prompt,
       modelId,
+      systemPrompt,
       projectId: process.env.NEXT_PUBLIC_WATSONX_AI_PROJECT_ID || '',
       parameters: {
-        max_new_tokens: 200,
+        max_new_tokens: 2048,
       },
-    }
+    };
 
-    console.debug('Generated params for generateCodeSnippet:', params)
-    const response = await generateText(params)
-    console.debug('Response from generateText in generateCodeSnippet:', response)
-    return response?.generated_text || ''
-  }
+    const response = await generateText(params);
+    return response?.generated_text || '';
+  };
 
-  // Function to get code suggestions
-  const getCodeSuggestions = async (query: string, modelId: WatsonModelId = 'GRANITE_13B_CHAT_V2'): Promise<string> => {
-    console.debug('getCodeSuggestions called with query:', query, 'and modelId:', modelId)
-
+  const getCodeSuggestions = async (
+    query: string, 
+    modelId: WatsonModelId = 'GRANITE_34B_CODE_INSTRUCT',
+    systemPrompt: string = DEFAULT_SYSTEM_PROMPTS.codeSuggestions
+  ): Promise<string> => {
     const params: TextGenerationParams = {
-      input: `Provide code suggestions for the following query: ${query}`,
+      input: query,
       modelId,
+      systemPrompt,
       projectId: process.env.NEXT_PUBLIC_WATSONX_AI_PROJECT_ID || '',
       parameters: {
-        max_new_tokens: 150,
+        max_new_tokens: 2048,
       },
-    }
+    };
 
-    console.debug('Generated params for getCodeSuggestions:', params)
-    const response = await generateText(params)
-    console.debug('Response from generateText in getCodeSuggestions:', response)
-    return response?.generated_text || ''
-  }
+    const response = await generateText(params);
+    return response?.generated_text || '';
+  };
 
-  // Function to generate project insights
-  const generateProjectInsights = async (context: string, modelId: WatsonModelId = 'GRANITE_13B_CHAT_V2'): Promise<string> => {
-    console.debug('generateProjectInsights called with context:', context, 'and modelId:', modelId)
-
+  const generateProjectInsights = async (
+    context: string, 
+    modelId: WatsonModelId = 'GRANITE_13B_INSTRUCT_V2',
+    systemPrompt: string = DEFAULT_SYSTEM_PROMPTS.projectInsights
+  ): Promise<string> => {
     const params: TextGenerationParams = {
-      input: `Given the following context about a coding project, provide insights and suggestions: ${context}`,
+      input: context,
       modelId,
+      systemPrompt,
       projectId: process.env.NEXT_PUBLIC_WATSONX_AI_PROJECT_ID || '',
       parameters: {
-        max_new_tokens: 200,
+        max_new_tokens: 2048,
       },
-    }
+    };
 
-    console.debug('Generated params for generateProjectInsights:', params)
-    const response = await generateText(params)
-    console.debug('Response from generateText in generateProjectInsights:', response)
-    return response?.generated_text || ''
-  }
+    const response = await generateText(params);
+    return response?.generated_text || '';
+  };
 
-  // Function to generate task breakdown
-  const generateTaskBreakdown = async (projectDescription: string, modelId: WatsonModelId = 'GRANITE_13B_CHAT_V2'): Promise<string> => {
-    console.debug('generateTaskBreakdown called with description:', projectDescription, 'and modelId:', modelId)
-
+  const generateTaskBreakdown = async (
+    projectDescription: string, 
+    modelId: WatsonModelId = 'GRANITE_13B_INSTRUCT_V2',
+    systemPrompt: string = DEFAULT_SYSTEM_PROMPTS.taskBreakdown
+  ): Promise<string> => {
     const params: TextGenerationParams = {
-      input: `Given this project description, break it down into a list of tasks: ${projectDescription}`,
+      input: projectDescription,
       modelId,
+      systemPrompt,
       projectId: process.env.NEXT_PUBLIC_WATSONX_AI_PROJECT_ID || '',
       parameters: {
-        max_new_tokens: 300,
+        max_new_tokens: 2048,
       },
-    }
+    };
 
-    console.debug('Generated params for generateTaskBreakdown:', params)
-    const response = await generateText(params)
-    console.debug('Response from generateText in generateTaskBreakdown:', response)
-    return response?.generated_text || ''
-  }
+    const response = await generateText(params);
+    return response?.generated_text || '';
+  };
 
-  // Function to estimate project duration
-  const estimateProjectDuration = async (tasks: string[], modelId: WatsonModelId = 'GRANITE_13B_CHAT_V2'): Promise<string> => {
-    console.debug('estimateProjectDuration called with tasks:', tasks, 'and modelId:', modelId)
-
+  const estimateProjectDuration = async (
+    tasks: string[], 
+    modelId: WatsonModelId = 'GRANITE_13B_INSTRUCT_V2',
+    systemPrompt: string = DEFAULT_SYSTEM_PROMPTS.projectDuration
+  ): Promise<string> => {
     const params: TextGenerationParams = {
-      input: `Given these project tasks, estimate the duration for each and provide a total project timeline: ${tasks.join(', ')}`,
+      input: tasks.join(', '),
       modelId,
+      systemPrompt,
       projectId: process.env.NEXT_PUBLIC_WATSONX_AI_PROJECT_ID || '',
       parameters: {
-        max_new_tokens: 250,
+        max_new_tokens: 2048,
       },
-    }
+    };
 
-    console.debug('Generated params for estimateProjectDuration:', params)
-    const response = await generateText(params)
-    console.debug('Response from generateText in estimateProjectDuration:', response)
-    return response?.generated_text || ''
-  }
+    const response = await generateText(params);
+    return response?.generated_text || '';
+  };
 
-  // Function to suggest tech stack
-  const suggestTechStack = async (projectRequirements: string, modelId: WatsonModelId = 'GRANITE_13B_CHAT_V2'): Promise<string> => {
-    console.debug('suggestTechStack called with requirements:', projectRequirements, 'and modelId:', modelId)
-
+  const suggestTechStack = async (
+    projectRequirements: string, 
+    modelId: WatsonModelId = 'GRANITE_13B_INSTRUCT_V2',
+    systemPrompt: string = DEFAULT_SYSTEM_PROMPTS.techStack
+  ): Promise<string> => {
     const params: TextGenerationParams = {
-      input: `Based on these project requirements, suggest an appropriate tech stack: ${projectRequirements}`,
+      input: projectRequirements,
       modelId,
+      systemPrompt,
       projectId: process.env.NEXT_PUBLIC_WATSONX_AI_PROJECT_ID || '',
       parameters: {
-        max_new_tokens: 200,
+        max_new_tokens: 2048,
       },
-    }
+    };
 
-    console.debug('Generated params for suggestTechStack:', params)
-    const response = await generateText(params)
-    console.debug('Response from generateText in suggestTechStack:', response)
-    return response?.generated_text || ''
-  }
+    const response = await generateText(params);
+    return response?.generated_text || '';
+  };
 
-  // Function to generate test cases
-  const generateTestCases = async (functionality: string, modelId: WatsonModelId = 'GRANITE_13B_CHAT_V2'): Promise<string> => {
-    console.debug('generateTestCases called with functionality:', functionality, 'and modelId:', modelId)
-
+  const generateTestCases = async (
+    functionality: string, 
+    modelId: WatsonModelId = 'GRANITE_34B_CODE_INSTRUCT',
+    systemPrompt: string = DEFAULT_SYSTEM_PROMPTS.testCases
+  ): Promise<string> => {
     const params: TextGenerationParams = {
-      input: `Generate a list of test cases for this functionality: ${functionality}`,
+      input: functionality,
       modelId,
+      systemPrompt,
       projectId: process.env.NEXT_PUBLIC_WATSONX_AI_PROJECT_ID || '',
       parameters: {
-        max_new_tokens: 300,
+        max_new_tokens: 2048,
       },
-    }
+    };
 
-    console.debug('Generated params for generateTestCases:', params)
-    const response = await generateText(params)
-    console.debug('Response from generateText in generateTestCases:', response)
-    return response?.generated_text || ''
-  }
+    const response = await generateText(params);
+    return response?.generated_text || '';
+  };
 
-  console.debug('useWatson hook is returning functions and state')
-
-  // Return all functions and loading state
   return {
     generateText,
     generateCodeSnippet,
@@ -207,5 +198,5 @@ export const useWatson = () => {
     suggestTechStack,
     generateTestCases,
     isLoading,
-  }
-}
+  };
+};

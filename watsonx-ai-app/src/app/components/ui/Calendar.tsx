@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'

@@ -1,7 +1,4 @@
-// src/app/components/Dashboard/AIAssistant.tsx
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useWatson } from '@/hooks/useWatson';
 import { WatsonModelId } from '@/constants/watsonModels';
 import {
@@ -12,22 +9,19 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Textarea from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Toast, ToastProvider, ToastViewport } from '@/app/components/ui/toast';
+import { Toast, ToastProvider, ToastViewport } from '@/components/ui/toast';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { CodePreview } from '@/components/ui/code-preview';
-import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
-import { FiCode, FiCpu, FiList, FiClock, FiTool, FiBriefcase, FiZap } from 'react-icons/fi';
-import styles from './AIAssistant.module.css';
+import { FiCode, FiCpu, FiList, FiClock, FiTool, FiBriefcase, FiZap, FiSettings } from 'react-icons/fi';
 
 interface AIAssistantProps {
   onGenerateInsights: (context: string, modelId?: WatsonModelId) => Promise<string>;
@@ -121,146 +115,167 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onGenerateInsights }) => {
 
   return (
     <ToastProvider>
-      <TooltipProvider>
-        <Card className={styles.aiAssistant}>
-          <CardHeader>
-            <CardTitle>AI Assistant</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList>
-                <TabsTrigger value="code"><FiCode /> Code Generation</TabsTrigger>
-                <TabsTrigger value="suggestions"><FiCpu /> Code Suggestions</TabsTrigger>
-                <TabsTrigger value="insights"><FiZap /> Project Insights</TabsTrigger>
-                <TabsTrigger value="tasks"><FiList /> Task Breakdown</TabsTrigger>
-                <TabsTrigger value="duration"><FiClock /> Duration Estimation</TabsTrigger>
-                <TabsTrigger value="techstack"><FiTool /> Tech Stack Suggestion</TabsTrigger>
-                <TabsTrigger value="tests"><FiBriefcase /> Test Case Generation</TabsTrigger>
-              </TabsList>
+      <Card className="w-full bg-gradient-to-br from-gray-900 to-gray-800 text-white shadow-xl rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+          <CardTitle className="text-2xl font-bold flex items-center">
+            <FiCpu className="mr-2" /> AI Assistant
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="grid grid-cols-3 lg:grid-cols-7 gap-2 bg-gray-800 p-1 rounded-lg">
+              {[
+                { value: 'code', icon: FiCode, label: 'Code' },
+                { value: 'suggestions', icon: FiCpu, label: 'Suggestions' },
+                { value: 'insights', icon: FiZap, label: 'Insights' },
+                { value: 'tasks', icon: FiList, label: 'Tasks' },
+                { value: 'duration', icon: FiClock, label: 'Duration' },
+                { value: 'techstack', icon: FiTool, label: 'Tech Stack' },
+                { value: 'tests', icon: FiBriefcase, label: 'Tests' },
+              ].map(({ value, icon: Icon, label }) => (
+                <TabsTrigger
+                  key={value}
+                  value={value}
+                  className="flex items-center justify-center p-2 text-sm font-medium transition-all duration-200 ease-in-out"
+                >
+                  <Icon className="mr-2" /> {label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-              <TabsContent value={activeTab}>
-                <Textarea
-                  placeholder={`Enter your ${activeTab} prompt here...`}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  className={styles.input}
-                />
-                
-                <div className={styles.controls}>
-                  <Button onClick={handleGenerate} disabled={isLoading}>
-                    {isLoading ? 'Generating...' : 'Generate'}
-                  </Button>
+            <TabsContent value={activeTab} className="space-y-4">
+              <Textarea
+                placeholder={`Enter your ${activeTab} prompt here...`}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="w-full p-3 bg-gray-700 text-white rounded-lg border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                rows={5}
+              />
+              
+              <div className="flex justify-between items-center">
+                <Button
+                  onClick={handleGenerate}
+                  disabled={isLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out transform hover:scale-105"
+                >
+                  {isLoading ? 'Generating...' : 'Generate'}
+                </Button>
+                <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Switch
-                        checked={advancedMode}
-                        onCheckedChange={setAdvancedMode}
-                      />
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">Advanced Mode</span>
+                        <Switch
+                          checked={advancedMode}
+                          onCheckedChange={setAdvancedMode}
+                          className="bg-gray-600"
+                        />
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent>
                       Toggle Advanced Mode
                     </TooltipContent>
                   </Tooltip>
-                </div>
+                </TooltipProvider>
+              </div>
 
-                {advancedMode && (
-                  <div className={styles.advancedControls}>
-                    <Select value={model} onValueChange={(value: WatsonModelId) => setModel(value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="GRANITE_13B_CHAT_V2">GRANITE 13B Chat V2</SelectItem>
-                        <SelectItem value="GRANITE_13B_INSTRUCT_V1">GRANITE 13B Instruct V1</SelectItem>
-                        {/* Add other model options */}
-                      </SelectContent>
-                    </Select>
-                    <div>
-                      <label>Max Tokens: {maxTokens}</label>
-                      <Slider
-                        min={1}
-                        max={1000}
-                        step={1}
-                        value={[maxTokens]}
-                        onValueChange={(value) => setMaxTokens(value[0])}
-                      />
-                    </div>
-                    <div>
-                      <label>Temperature: {temperature.toFixed(2)}</label>
-                      <Slider
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        value={[temperature]}
-                        onValueChange={(value) => setTemperature(value[0])}
-                      />
-                    </div>
+              {advancedMode && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-800 rounded-lg">
+                  <Select value={model} onValueChange={(value: WatsonModelId) => setModel(value)}>
+                    <SelectTrigger className="bg-gray-700 border-gray-600">
+                      <SelectValue placeholder="Select model" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="GRANITE_13B_CHAT_V2">GRANITE 13B Chat V2</SelectItem>
+                      <SelectItem value="GRANITE_13B_INSTRUCT_V1">GRANITE 13B Instruct V1</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium">Max Tokens: {maxTokens}</label>
+                    <Slider
+                      min={1}
+                      max={1000}
+                      step={1}
+                      value={[maxTokens]}
+                      onValueChange={(value) => setMaxTokens(value[0])}
+                      className="bg-gray-700"
+                    />
                   </div>
-                )}
-
-                <ScrollArea className={styles.outputArea}>
-                  {activeTab === 'code' ? (
-                    <CodePreview
-                    html={''} css={''} js={''} preview={undefined} {...{ code: output, language: "javascript", onCopy: handleCopy }}                    />
-                  ) : (
-                    <pre>{output}</pre>
-                  )}
-                </ScrollArea>
-
-                <div className={styles.actions}>
-                  <Button onClick={handleCopy}>Copy</Button>
-                  <Button onClick={handleSave}>Save</Button>
-                  <Button onClick={handleExport}>Export</Button>
-                  <Button onClick={() => handleOpenDialog('AI Output Details', output)}>View Details</Button>
+                  <div>
+                    <label className="block mb-2 text-sm font-medium">Temperature: {temperature.toFixed(2)}</label>
+                    <Slider
+                      min={0}
+                      max={1}
+                      step={0.01}
+                      value={[temperature]}
+                      onValueChange={(value) => setTemperature(value[0])}
+                      className="bg-gray-700"
+                    />
+                  </div>
                 </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-          <CardFooter>
-            <Alert x={undefined}>
-              <AlertTitle>AI Assistant Tips</AlertTitle>
-              <AlertDescription>
-                Use clear and specific prompts for better results. Experiment with different models and settings in advanced mode.
-              </AlertDescription>
-            </Alert>
-          </CardFooter>
-        </Card>
+              )}
 
-        <Accordion type="single" collapsible>
+              <ScrollArea className="h-[300px] border border-gray-700 rounded-lg p-4 bg-gray-800">
+                {activeTab === 'code' ? (
+                  <CodePreview
+                    html={output}
+                    css=""
+                    js=""
+                    preview={<div dangerouslySetInnerHTML={{ __html: output }} />}
+                  />
+                ) : (
+                  <pre className="whitespace-pre-wrap text-sm text-gray-300">{output}</pre>
+                )}
+              </ScrollArea>
+
+              <div className="flex justify-end space-x-2">
+                <Button onClick={handleCopy} className="bg-green-600 hover:bg-green-700">Copy</Button>
+                <Button onClick={handleSave} className="bg-yellow-600 hover:bg-yellow-700">Save</Button>
+                <Button onClick={handleExport} className="bg-purple-600 hover:bg-purple-700">Export</Button>
+                <Button onClick={() => handleOpenDialog('AI Output Details', output)} className="bg-blue-600 hover:bg-blue-700">View Details</Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+        <CardFooter className="bg-gray-800 p-4">
+          <Alert x className="bg-blue-900 border-blue-700 text-white">
+            <AlertTitle className="font-bold">AI Assistant Tips</AlertTitle>
+            <AlertDescription>
+              Use clear and specific prompts for better results. Experiment with different models and settings in advanced mode.
+            </AlertDescription>
+          </Alert>
+        </CardFooter>
+
+        <Accordion type="single" collapsible className="bg-gray-800 rounded-b-xl">
           <AccordionItem value="history">
-            <AccordionTrigger>View Generation History</AccordionTrigger>
-            <AccordionContent>
-              {/* Implement history logic here */}
-              <p>Your generation history will appear here.</p>
+            <AccordionTrigger className="px-6 py-4 text-white hover:bg-gray-700">View Generation History</AccordionTrigger>
+            <AccordionContent className="px-6 py-4 bg-gray-700">
+              <p className="text-gray-300">Your generation history will appear here.</p>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      </Card>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{dialogContent.title}</DialogTitle>
-            </DialogHeader>
-            <ScrollArea className={styles.dialogContent}>
-              <pre>{dialogContent.content}</pre>
-            </ScrollArea>
-            <DialogFooter>
-              <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="bg-gray-800 text-white">
+          <DialogHeader>
+            <DialogTitle>{dialogContent.title}</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[300px]">
+            <pre className="whitespace-pre-wrap text-sm text-gray-300">{dialogContent.content}</pre>
+          </ScrollArea>
+          <DialogFooter>
+            <Button onClick={() => setIsDialogOpen(false)} className="bg-blue-600 hover:bg-blue-700">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-        {toastMessage && (
-          <Toast
-            title="Notification"
-            content={toastMessage}
-            onOpenChange={(open) => {
-              if (!open) setToastMessage('');
-            }}
-          />
-        )}
-        <ToastViewport />
-      </TooltipProvider>
+      {toastMessage && (
+        <Toast className="bg-gray-800 text-white border border-gray-700">
+          <p>{toastMessage}</p>
+        </Toast>
+      )}
+      <ToastViewport />
     </ToastProvider>
   );
 };

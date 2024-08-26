@@ -72,12 +72,12 @@ const LandingPage: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mousePos, targetPos]);
+  }, [targetPos]);
 
   return (
     <div className={styles.app}>
       <header className={styles.header}>
-        <div className="flex items-center">
+      <Link href="/" className="flex items-center">
           <span className="w-11 h-11 bg-blue-500 rounded-lg flex items-center justify-center text-xl font-bold mr-3">
             <Image
               src="/granix5.png"
@@ -87,7 +87,7 @@ const LandingPage: React.FC = () => {
             />
           </span>
           <span className="app-name">granix</span>
-        </div>
+        </Link>
       </header>
       <main className={styles.main}>
         <div className={styles.content}>
