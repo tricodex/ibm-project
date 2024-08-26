@@ -12,6 +12,9 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", ...fontFamily.sans],
+        'inter': ['Inter', 'sans-serif'],
+        'sans-baloo-paaji': ['Baloo Paaji 2', 'sans-serif'],
+
       },
       colors: {
         primary: {

@@ -1,139 +1,136 @@
 .messageSection {
-    background: rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    max-width: 400px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    transition: height 0.3s ease, margin-bottom 0.3s ease;
-  }
-  
-  .collapsed {
-    height: 60px;
-    margin-bottom: 20px;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background: rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .title {
-    font-size: 1.2rem;
-    color: #fff;
-    font-weight: bold;
-  }
-  
-  .controls {
-    display: flex;
-    align-items: center;
-  }
-  
-  .collapseButton, 
-  .closeButton {
-    background: none;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  
-  .messagesContainer {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px 20px;
-  }
-  
-  .userMessageBox,
-  .aiMessageBox {
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    max-width: 75%;
-  }
-  
-  .userMessageBox {
-    background-color: #007bff;
-    color: #fff;
-    align-self: flex-end;
-  }
-  
-  .aiMessageBox {
-    background-color: #f0f0f0;
-    color: #333;
-    align-self: flex-start;
-  }
-  
-  .messageContent {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .messageHeader {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    margin-bottom: 5px;
-  }
-  
-  .senderName {
-    font-weight: bold;
-  }
-  
-  .messageTime {
-    color: #bbb;
-  }
-  
-  .messageText {
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-  
-  .inputContainer {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    background: rgba(0, 0, 0, 0.1);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .inputField {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: #fff;
-    margin-right: 10px;
-  }
-  
-  .inputField::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  
-  .sendButton {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
+  background: rgba(0, 0, 0, 0.7); /* Darker background for better contrast */
+  -webkit-backdrop-filter: blur(15px); /* Add backdrop-filter for glass effect */
+  backdrop-filter: blur(15px); /* Increase blur for a more glassy look */
+  border-radius: 15px; /* Adjust border-radius to soften corners */
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); /* Deepen shadow for better depth */
+  border: 1px solid rgba(255, 255, 255, 0.25); /* More visible border */
+  max-width: 500px; /* Increase width */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  bottom: 30px; /* Adjust position */
+  right: 30px; /* Adjust position */
+  z-index: 1000;
+  transition: all 0.4s ease; /* Smooth transition for all properties */
+}
+
+.collapsed {
+  height: 70px; /* Slightly increase the collapsed height */
+  margin-bottom: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px; /* Add more padding */
+  background: rgba(0, 0, 0, 0.6); /* Darken header for contrast */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25); /* Sharper divider */
+}
+
+.title {
+  font-size: 1.4rem; /* Increase font size */
+  color: #fff;
+  font-weight: 600; /* Adjust font-weight */
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+}
+
+.collapseButton, 
+.closeButton {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  margin-left: 15px; /* Increase margin for better spacing */
+}
+
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px; /* Increase padding for better spacing */
+  max-height: 400px; /* Set a max height */
+}
+
+.userMessageBox,
+.aiMessageBox {
+  padding: 15px; /* Increase padding for message bubbles */
+  border-radius: 15px; /* Rounder corners */
+  margin-bottom: 15px; /* More space between messages */
+  max-width: 80%; /* Adjust max-width for message bubbles */
+  word-wrap: break-word; /* Ensure long messages wrap correctly */
+}
+
+.userMessageBox {
+  background-color: #007bff;
+  color: #fff;
+  align-self: flex-end;
+}
+
+.aiMessageBox {
+  background-color: #f0f0f0;
+  color: #333;
+  align-self: flex-start;
+}
+
+.messageContent {
+  display: flex;
+  flex-direction: column;
+  white-space: pre-wrap; /* Preserve whitespace */
+}
+
+.messageText code {
+  background-color: rgba(0, 0, 0, 0.05); /* Light gray background for inline code */
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-family: monospace;
+}
+
+.messageText pre {
+  background-color: rgba(0, 0, 0, 0.05); /* Light gray background for code blocks */
+  padding: 10px;
+  border-radius: 10px;
+  font-family: monospace;
+  overflow-x: auto; /* Allow horizontal scroll for long code */
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px; /* Increase padding for input area */
+  background: rgba(0, 0, 0, 0.2); /* Slightly darker input area */
+  border-top: 1px solid rgba(255, 255, 255, 0.25); /* Sharper divider */
+}
+
+.inputField {
+  flex: 1;
+  padding: 12px; /* Increase padding */
+  border-radius: 12px; /* Adjust border-radius */
+  border: none;
+  background: rgba(255, 255, 255, 0.3); /* Increase opacity for better visibility */
+  color: #fff;
+  margin-right: 12px; /* Increase margin */
+}
+
+.inputField::placeholder {
+  color: rgba(255, 255, 255, 0.9); /* Increase placeholder visibility */
+}
+
+.sendButton {
+  background: #28a745; /* Green color for send button */
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 45px; /* Increase button size */
+  height: 45px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

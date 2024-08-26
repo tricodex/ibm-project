@@ -1,0 +1,113 @@
+.app {
+  overflow: hidden;
+}
+
+.noscroll {
+  overflow: hidden;
+}
+
+.intro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #000; /* Dark background for contrast */
+}
+
+.grid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 220vh; /* Increased height to reduce gaps */
+  margin-top: -60vh;
+  margin-bottom: -60vh;
+}
+
+.row {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.row__item {
+  position: relative;
+  width: 20vw; /* Increased size */
+  height: 11.25vw; /* 16:9 aspect ratio */
+  margin: 0 0.5vw; /* Reduced margin */
+}
+
+.row__item_inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.row__item_img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.row__item_img_large {
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+}
+
+.fullview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.enter {
+  position: absolute;
+  bottom: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Improved text readability */
+}
+
+.enter:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.enter.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.content {
+  padding: 10vh 5vw;
+}
+
+.content__nav {
+  display: flex;
+  justify-content: center;
+}
+

@@ -1,168 +1,166 @@
-.container {
-    margin: 0 auto;
-    padding: 2rem;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: var(--header-bg-color);
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .header h1 {
-    font-size: 2rem;
-    color: var(--primary-color);
-  }
-  
-  .sidebar {
-    background-color: var(--sidebar-bg-color);
-    width: 250px;
-    transition: width 0.3s ease;
-  }
-  
-  .sidebar.collapsed {
-    width: 80px;
-  }
-  
-  .sidebar .menu-item {
+.dashboardContainer {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  margin-left: var(--sidebar-width); /* Offset by sidebar width */
+  transition: margin-left var(--transition-speed) ease-in-out; /* Smooth transition */
+}
+
+.collapsed .mainContent {
+  margin-left: var(--sidebar-width-collapsed); /* Adjust margin when sidebar is collapsed */
+}
+
+.mainArea {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  margin-left: calc(var(--sidebar-width) + 1rem); /* Ensure header aligns with main content */
+  transition: margin-left var(--transition-speed) ease-in-out; /* Smooth transition */
+}
+
+.collapsed .dashboardHeader {
+  margin-left: calc(var(--sidebar-width-collapsed) + 1rem); /* Adjust margin when sidebar is collapsed */
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+}
+
+.tabsContainer {
+  background-color: var(--background-secondary);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.tabsList {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.tabContent {
+  min-height: calc(100vh - 200px);
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background-color: var(--background-card);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.projectOverview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.totalProjects {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.addProjectButton {
+  display: flex;
+  align-items: center;
+}
+
+.quickActions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fullWidthButton {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.projectFilters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.statusFilter {
+  width: 200px;
+}
+
+.viewModeButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chartPlaceholder {
+  height: 300px;
+  background-color: var(--background-tertiary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mainArea {
     padding: 1rem;
-    color: var(--text-color);
-    transition: color 0.3s ease;
   }
-  
-  .sidebar .menu-item:hover {
-    color: var(--hover-color);
+
+  .gridContainer {
+    grid-template-columns: 1fr;
   }
-  
-  .main {
-    display: flex;
-    flex: 1;
+
+  .projectFilters {
     flex-direction: column;
-    padding: 1.5rem;
-    background-color: var(--main-bg-color);
+    align-items: flex-start;
+    gap: 1rem;
   }
-  
-  .card {
-    background-color: var(--card-bg-color);
-    border-radius: 8px;
-    box-shadow: var(--box-shadow);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    transition: transform 0.3s ease;
-  }
-  
-  .card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .card .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .card .card-header h2 {
-    font-size: 1.5rem;
-    color: var(--card-header-color);
-  }
-  
-  .card .card-header .button {
-    background-color: var(--button-bg-color);
-    color: var(--button-text-color);
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .card .card-header .button:hover {
-    background-color: var(--button-hover-bg-color);
-  }
-  
-  .data-table {
+
+  .statusFilter {
     width: 100%;
-    border-collapse: collapse;
   }
-  
-  .data-table th, .data-table td {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
+
+  .mainContent {
+    margin-left: 0; /* Remove left margin on small screens */
   }
-  
-  .data-table th {
-    background-color: var(--table-header-bg-color);
-    color: var(--table-header-text-color);
+
+  .dashboardHeader {
+    margin-left: 0; /* Remove header margin on small screens */
   }
-  
-  .data-table tbody tr:hover {
-    background-color: var(--table-row-hover-bg-color);
-  }
-  
-  .toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: var(--toast-bg-color);
-    color: var(--toast-text-color);
-    padding: 1rem;
-    border-radius: 5px;
-    box-shadow: var(--toast-box-shadow);
-    z-index: 1000;
-    transition: opacity 0.3s ease;
-  }
-  
-  .modal {
-    background-color: var(--modal-bg-color);
-    padding: 2rem;
-    border-radius: 10px;
-    width: 500px;
-    max-width: 100%;
-    box-shadow: var(--modal-box-shadow);
-  }
-  
-  .progress-bar {
-    background-color: var(--progress-bg-color);
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  .progress-bar-inner {
-    background-color: var(--progress-fill-color);
-    height: 8px;
-    width: var(--progress-width);
-    transition: width 0.3s ease;
-  }
-  
-  .calendar {
-    background-color: var(--calendar-bg-color);
-    padding: 1rem;
-    border-radius: 8px;
-  }
-  
-  .tabs {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
-  
-  .tabs .tab {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    background-color: var(--tab-bg-color);
-    color: var(--tab-text-color);
-    transition: background-color 0.3s ease;
-  }
-  
-  .tabs .tab.active {
-    background-color: var(--tab-active-bg-color);
-    color: var(--tab-active-text-color);
-  }
-  
-  .tabs .tab:hover {
-    background-color: var(--tab-hover-bg-color);
-  }
-  
+}

@@ -1,70 +1,58 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
-import { Flip } from 'gsap/Flip';
-import Lenis from '@studio-freight/lenis';
-import Chat from '@/components/Chat';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Flip } from 'gsap/all';
 import Link from 'next/link';
-import './LandingPage.css';
+import styles from './LandingPage.module.css';
 
 gsap.registerPlugin(Flip);
 
-const LandingPage = () => {
-  const gridRef = useRef(null);
-  const fullviewRef = useRef(null);
-  const contentRef = useRef(null);
-  const enterButtonRef = useRef(null);
-  const [winsize, setWinsize] = useState({ width: window.innerWidth, height: window.innerHeight });
-  const [mousepos, setMousepos] = useState({ x: winsize.width / 2, y: winsize.height / 2 });
+const LandingPage: React.FC = () => {
+  // Refs and state setup
+  const gridRef = useRef<HTMLDivElement>(null);
+  const fullviewRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const enterButtonRef = useRef<HTMLButtonElement>(null);
+  const [winsize, setWinsize] = useState({ width: 0, height: 0 });
+  const [mousepos, setMousepos] = useState({ x: 0, y: 0 });
 
-  const config = {
-    translateX: true,
-    skewX: false,
-    contrast: true,
-    scale: false,
-    brightness: true
-  };
-
-  const numRows = 3;
-  const numItemsPerRow = 5;
+  // Grid configuration
+  const numRows = 5;
+  const numItemsPerRow = 7;
   const middleRowIndex = Math.floor(numRows / 2);
   const middleItemIndex = Math.floor(numItemsPerRow / 2);
 
-  const images = Array.from({ length: numRows * numItemsPerRow }, (_, i) => `/lp-images/image${i + 1}.png`);
+  // Image paths
+  const images = Array.from({ length: numRows * numItemsPerRow }, (_, i) => `/lp-images/image${(i % 20) + 1}.png`);
 
+  // Window size and mouse position update handlers
+  const updateWinsize = useCallback(() => setWinsize({ width: window.innerWidth, height: window.innerHeight }), []);
+  const updateMousepos = useCallback((ev: MouseEvent) => setMousepos({ x: ev.clientX, y: ev.clientY }), []);
+
+  // Event listeners setup
   useEffect(() => {
-    const updateWinsize = () => {
-      setWinsize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
+    updateWinsize();
     window.addEventListener('resize', updateWinsize);
-    window.addEventListener('mousemove', (ev) => {
-      setMousepos({ x: ev.clientX, y: ev.clientY });
-    });
-
-    const lenis = new Lenis({ lerp: 0.15 });
-    const raf = (time) => {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    };
-    requestAnimationFrame(raf);
-
+    window.addEventListener('mousemove', updateMousepos);
     return () => {
       window.removeEventListener('resize', updateWinsize);
-      lenis.destroy();
+      window.removeEventListener('mousemove', updateMousepos);
     };
-  }, []);
+  }, [updateWinsize, updateMousepos]);
 
+  // Main animation effect
   useEffect(() => {
-    const gridRows = gridRef.current.querySelectorAll('.row');
-    const middleRowItemInner = gridRows[middleRowIndex].querySelectorAll('.row__item')[middleItemIndex].querySelector('.row__item-inner');
+    if (!gridRef.current) return;
 
+    const gridRows = gridRef.current.querySelectorAll(`.${styles.row}`);
+    const middleRowItemInner = gridRows[middleRowIndex].querySelectorAll(`.${styles.row__item}`)[middleItemIndex].querySelector(`.${styles.row__item_inner}`);
+
+    // Animation parameters
     const baseAmt = 0.1;
     const minAmt = 0.05;
     const maxAmt = 0.1;
 
+    // Initialize styles for each row
     const renderedStyles = Array.from({ length: numRows }, (_, index) => {
       const distanceFromMiddle = Math.abs(index - middleRowIndex);
       const amt = Math.max(baseAmt - distanceFromMiddle * 0.03, minAmt);
@@ -72,6 +60,8 @@ const LandingPage = () => {
       return { amt, scaleAmt, translateX: { previous: 0, current: 0 }, contrast: { previous: 100, current: 100 }, brightness: { previous: 100, current: 100 } };
     });
 
+    // Animation render loop
+    let rafId: number;
     const render = () => {
       const mappedX = (((mousepos.x / winsize.width) * 2 - 1) * 40 * winsize.width) / 100;
       const mappedContrast = 100 - Math.pow(Math.abs((mousepos.x / winsize.width) * 2 - 1), 2) * (100 - 330);
@@ -93,12 +83,15 @@ const LandingPage = () => {
         });
       });
 
-      requestAnimationFrame(render);
+      rafId = requestAnimationFrame(render);
     };
 
-    const renderRef = requestAnimationFrame(render);
+    render();
 
+    // Fullview transition
     const enterFullview = () => {
+      if (!middleRowItemInner || !fullviewRef.current || !contentRef.current || !gridRef.current) return;
+
       const flipstate = Flip.getState(middleRowItemInner);
       fullviewRef.current.appendChild(middleRowItemInner);
 
@@ -108,52 +101,62 @@ const LandingPage = () => {
         duration: 0.9,
         ease: "power4",
         absolute: true,
-        onComplete: () => cancelAnimationFrame(renderRef)
+        onComplete: () => cancelAnimationFrame(rafId)
       }))
         .to(gridRef.current, {
           duration: 0.9,
           ease: "power4",
           opacity: 0.01
         }, 0)
-        .to(middleRowItemInner.querySelector('.row__item-img'), {
+        .to(middleRowItemInner.querySelector(`.${styles.row__item_img}`), {
           scale: 1.2,
           duration: 3,
           ease: "sine"
         }, "<-=0.45")
         .to(contentRef.current, {
-          y: '-50vh',
+          y: '-30vh',
           duration: 0.9,
           ease: "power4"
         });
 
-      enterButtonRef.current.classList.add("hidden");
-      document.body.classList.remove("noscroll");
+      if (enterButtonRef.current) {
+        enterButtonRef.current.classList.add(styles.hidden);
+      }
+      document.body.classList.remove(styles.noscroll);
     };
 
-    enterButtonRef.current.addEventListener('click', enterFullview);
+    // Button event listener
+    const enterButton = enterButtonRef.current;
+    if (enterButton) {
+      enterButton.addEventListener('click', enterFullview);
+    }
 
+    // Cleanup
     return () => {
-      cancelAnimationFrame(renderRef);
-      enterButtonRef.current.removeEventListener('click', enterFullview);
+      cancelAnimationFrame(rafId);
+      if (enterButton) {
+        enterButton.removeEventListener('click', enterFullview);
+      }
     };
   }, [mousepos, winsize]);
 
   return (
-    <div className="app">
+    
+    <div className={styles.app}>
+        
       <main>
-        <section className="intro">
-          <div className="grid" ref={gridRef}>
+        <section className={styles.intro}>
+
+          <div className={styles.grid} ref={gridRef}>
             {Array.from({ length: numRows }).map((_, rowIndex) => (
-              <div className="row" key={rowIndex}>
+              <div className={styles.row} key={rowIndex}>
                 {Array.from({ length: numItemsPerRow }).map((_, itemIndex) => (
-                  <div className="row__item" key={itemIndex}>
-                    <div className="row__item-inner">
+                  <div className={styles.row__item} key={itemIndex}>
+                    <div className={styles.row__item_inner}>
                       <div
-                        className={`row__item-img ${rowIndex === middleRowIndex && itemIndex === middleItemIndex ? 'row__item-img--large' : ''}`}
+                        className={`${styles.row__item_img} ${rowIndex === middleRowIndex && itemIndex === middleItemIndex ? styles.row__item_img_large : ''}`}
                         style={{ 
                           backgroundImage: `url(${images[rowIndex * numItemsPerRow + itemIndex]})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center'
                         }}
                       />
                     </div>
@@ -162,38 +165,16 @@ const LandingPage = () => {
               </div>
             ))}
           </div>
-          <div className="fullview" ref={fullviewRef}></div>
-          <Card className="enter-card">
-            <CardContent>
-              <Button className="enter" ref={enterButtonRef}>Explore</Button>
-            </CardContent>
-          </Card>
+          <div className={styles.fullview} ref={fullviewRef}></div>
         </section>
-        <section className="content" ref={contentRef}>
-          <div className="content__header">
-            <h2>Projects</h2>
-          </div>
-          <div className="content__text">
-            <p className="right">To <strong>accomplish </strong>great things, we must not only act, but also <strong>dream</strong>; not only <strong> plan</strong>, but also <strong>believe</strong>. <br />Creating, learning, and setting goals are fundamental pillars for personal and professional growth. Engaging in continuous creation fosters innovation and keeps the mind active, allowing individuals to explore new ideas and express their unique perspectives. Learning, on the other hand, expands our knowledge base and equips us with the skills necessary to navigate an ever-evolving world. </p>
-            <p className="highlight">What you get by achieving your goals is not as important as what you become by achieving your goals.</p>
-            <Card className="links-card">
-              <CardContent>
-                <Link href="/about">
-                  <Button>About Us</Button>
-                </Link>
-                <Link href="/services">
-                  <Button>Our Services</Button>
-                </Link>
-                <Link href="/contact">
-                  <Button>Contact</Button>
-                </Link>
-              </CardContent>
-            </Card>
-            <p>We are what we repeatedly do. Excellence, then, is not an act, but a habit. It is through learning that we adapt to new challenges and stay relevant in our fields. Setting goals provides direction and motivation, transforming abstract aspirations into achievable milestones. Goals keep us focused, ensuring that our efforts are aligned with our long-term vision. Together, creating, learning, and setting goals form a dynamic cycle of growth that propels us forward, enabling us to reach our fullest potential and make meaningful contributions to the world around us.</p>
+        <section className={styles.content} ref={contentRef}>
+          <div className={styles.content__nav}>
+            <Link href="/dashboard">
+              <button className={styles.enter}>Go to Dashboard</button>
+            </Link>
           </div>
         </section>
       </main>
-      <Chat />
     </div>
   );
 };

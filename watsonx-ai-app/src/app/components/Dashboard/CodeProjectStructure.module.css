@@ -1,0 +1,63 @@
+/* src/app/components/Dashboard/CodeProjectStructure.module.css */
+.codeProjectStructure {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .structureContainer {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .treeView {
+    flex: 1;
+    max-width: 300px;
+  }
+  
+  .preview {
+    flex: 2;
+  }
+  
+  .scrollArea {
+    height: 400px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 1rem;
+  }
+  
+  .treeItemLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .treeItemActions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .addRootButton {
+    margin-top: 1rem;
+    width: 100%;
+  }
+  
+  .generateButton {
+    margin-top: 1rem;
+  }
+  
+  .dialogForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  @media (max-width: 768px) {
+    .structureContainer {
+      flex-direction: column;
+    }
+  
+    .treeView {
+      max-width: 100%;
+    }
+  }

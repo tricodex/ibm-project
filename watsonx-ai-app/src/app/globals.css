@@ -1,141 +1,73 @@
-@import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500,700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400..800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Color Variables */
 :root {
-  --app-container: #f3f6fd;
-  --main-color: #1f1c2e;
-  --secondary-color: #4A4A4A;
-  --link-color: #1f1c2e;
-  --link-color-hover: #c3cff4;
-  --link-color-active: #fff;
-  --link-color-active-bg: #1f1c2e;
-  --projects-section: #fff;
-  --message-box-hover: #fafcff;
-  --message-box-border: #e9ebf0;
-  --more-list-bg: #fff;
-  --more-list-bg-hover: #f6fbff;
-  --more-list-shadow: rgba(209, 209, 209, 0.4);
-  --button-bg: #1f1c24;
-  --search-area-bg: #fff;
-  --star: #1ff1c2e;
-  --message-btn: #fff;
-  --transition-speed: 0.3s;
   --sidebar-width: 250px;
   --sidebar-width-collapsed: 80px;
+  --transition-speed: 0.3s;
 }
 
-/* Dark Mode Colors */
-.dark {
-  --app-container: #1f1d2b;
-  --main-color: #fff;
-  --secondary-color: rgba(255,255,255,.8);
-  --projects-section: #1f2937;
-  --link-color: rgba(255,255,255,.8);
-  --link-color-hover: rgba(195, 207, 244, 0.1);
-  --link-color-active-bg: rgba(195, 207, 244, 0.2);
-  --button-bg: #1f2937;
-  --search-area-bg: #1f2937;
-  --message-box-hover: #243244;
-  --message-box-border: rgba(255,255,255,.1);
-  --star: #ffd92c;
-  --light-font: rgba(255,255,255,.8);
-  --more-list-bg: #2f3142;
-  --more-list-bg-hover: rgba(195, 207, 244, 0.1);
-  --more-list-shadow: rgba(195, 207, 244, 0.1);
-  --message-btn: rgba(195, 207, 244, 0.1);
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-/* Base Styles */
-@layer base {
-  html, body {
-    @apply w-full h-screen m-0 overflow-hidden;
-  }
-
-  body {
-    @apply font-['DM_Sans',sans-serif] flex justify-center bg-[var(--app-container)];
-    transition: background-color var(--transition-speed) ease;
-  }
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  background-color: theme('colors.gray.100');
+  color: theme('colors.gray.900');
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-/* Component Styles */
+.dark body {
+  background-color: theme('colors.gray.900');
+  color: theme('colors.gray.100');
+}
+
+body {
+  background-image: url('/lp-images/image25.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 @layer components {
-  /* App Container */
-  .app-container {
-    @apply w-full flex flex-col h-full bg-[var(--app-container)] transition-all duration-200 max-w-[1800px];
-  }
-
-  /* Header */
-  .app-header {
-    @apply flex justify-between items-center w-full p-4 bg-[var(--projects-section)] shadow-md z-10;
-    transition: background-color var(--transition-speed) ease;
-  }
-
-  .app-header-left, .app-header-right {
-    @apply flex items-center;
-  }
-
-  .app-header-left {
-    @apply flex-grow;
-  }
-
-  .app-header-right button {
-    @apply ml-2.5;
-  }
-
-  .app-name {
-    @apply text-[var(--main-color)] text-2xl font-bold mx-8;
-    transition: color var(--transition-speed) ease;
-  }
-
-  /* Mode Switch */
-  .mode-switch {
-    @apply bg-transparent border-none p-2 text-[var(--main-color)] rounded-full hover:bg-[var(--link-color-hover)];
-    transition: all var(--transition-speed) ease;
-  }
-
-  /* Search */
-  .search-wrapper {
-    @apply rounded-full bg-[var(--search-area-bg)] pr-3 h-10 flex justify-between items-center w-full max-w-[480px] text-[var(--light-font)] shadow-md overflow-hidden;
-    transition: all var(--transition-speed) ease;
-  }
-
-  .search-input {
-    @apply border-none flex-1 outline-none h-full px-5 text-base bg-[var(--search-area-bg)] text-[var(--main-color)];
-    transition: all var(--transition-speed) ease;
-  }
-
-  .search-input::placeholder {
-    @apply text-[var(--main-color)] opacity-60;
-    transition: color var(--transition-speed) ease;
-  }
-
-  /* Add Button */
-  .add-btn {
-    @apply text-white bg-[var(--button-bg)] p-2 border-0 rounded-full flex items-center justify-center;
-    transition: all var(--transition-speed) ease;
-  }
-
-  /* App Content */
-  .app-content {
-    @apply flex flex-1 overflow-hidden;
-  }
-
-  /* Sidebar */
   .app-sidebar {
-    @apply flex-shrink-0 bg-[var(--projects-section)] h-full overflow-hidden transition-all duration-300 ease-in-out;
-    width: var(--sidebar-width);
+    @apply h-screen transition-transform duration-300 ease-in-out;
+    width: var(--sidebar-width); /* Ensure sidebar has a fixed width */
+    position: fixed; /* Fix the sidebar position */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensure it's above other elements */
+    background-color: theme('colors.gray.800'); /* Add background for better visibility */
   }
 
   .app-sidebar.collapsed {
-    width: var(--sidebar-width-collapsed);
+    width: var(--sidebar-width-collapsed); /* Apply collapsed width */
+    @apply translate-x-0;
+  }
+
+  .main-content {
+    @apply transition-all duration-300 ease-in-out;
+    margin-left: var(--sidebar-width); /* Adjust based on sidebar width */
+    padding-left: calc(var(--sidebar-width) + 1rem); /* Additional padding for spacing */
+  }
+
+  .app-sidebar.collapsed + .main-content {
+    margin-left: var(--sidebar-width-collapsed); /* Adjust margin for collapsed state */
+    padding-left: calc(var(--sidebar-width-collapsed) + 1rem); /* Adjust padding for collapsed state */
   }
 
   .sidebar-link {
-    @apply flex items-center p-4 text-[var(--main-color)] hover:bg-[var(--link-color-hover)] transition-all duration-200;
+    @apply flex items-center py-4 px-6 text-white hover:bg-blue-600 transition-colors duration-200;
   }
 
   .sidebar-link-text {
@@ -146,170 +78,88 @@
     @apply opacity-0;
   }
 
-  /* Main Content */
-  .main-content {
-    @apply flex-grow p-6 overflow-auto;
+  .app-sidebar .sidebar-link.active {
+    @apply bg-blue-700 text-white;
   }
 
-  /* Projects Section */
-  .projects-section {
-    @apply bg-[var(--projects-section)] rounded-[32px] p-8 shadow-lg;
-    transition: background-color var(--transition-speed) ease;
-  }
-
-  .projects-section-header {
-    @apply flex justify-between items-center mb-6;
-  }
-
-  .projects-section-line {
-    @apply flex justify-between items-center mb-6;
-  }
-
-  .projects-status {
-    @apply flex space-x-4;
-  }
-
-  .item-status {
-    @apply flex flex-col items-center;
-  }
-
-  .status-number {
-    @apply text-2xl font-bold text-blue-600 dark:text-blue-400;
-  }
-
-  .status-type {
-    @apply text-sm text-gray-500 dark:text-gray-400;
-  }
-
-  /* View Actions */
-  .view-actions {
-    @apply flex space-x-2;
-  }
-
-  .view-btn {
-    @apply p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200;
-  }
-
-  .view-btn.active {
-    @apply bg-blue-500 text-white;
-  }
-
-  /* Project Boxes */
-  .project-boxes {
-    @apply grid gap-6;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  }
-
-  .project-box-wrapper {
-    @apply transition-transform duration-200 ease-in-out;
-  }
-
-  .project-box {
-    @apply bg-white dark:bg-gray-800 rounded-[20px] p-6 shadow-md;
-    transition: all var(--transition-speed) ease;
-  }
-
-  .project-box:hover {
-    @apply shadow-lg transform -translate-y-1;
-  }
-
-  /* Messages Section */
-  .messages-section {
-    @apply flex-shrink-0 w-80 bg-[var(--projects-section)] p-4 transition-transform duration-300 ease-in-out;
-  }
-
-  /* AI Insights Section */
-  .ai-insights-section {
-    @apply mt-8 bg-[var(--projects-section)] rounded-[30px] p-6;
-    transition: background-color var(--transition-speed) ease, opacity 0.3s ease;
-  }
-
-  /* Messages Button */
-  .messages-btn {
-    @apply fixed bottom-6 right-6 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-200;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideInFromRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes slideInFromLeft {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease-in;
-}
-
-.slide-in-right {
-  animation: slideInFromRight 0.3s ease-out;
-}
-
-.slide-in-left {
-  animation: slideInFromLeft 0.3s ease-out;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .app-content {
-    @apply flex-col;
-  }
-
-  .app-sidebar {
-    @apply w-full order-first;
-  }
-
-  .projects-section {
-    @apply mt-4;
-  }
-}
-
-@media (max-width: 768px) {
   .app-header {
-    @apply flex-col items-start;
+    @apply flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md z-10 transition-colors duration-300;
+    margin-left: var(--sidebar-width); /* Adjust header based on sidebar */
+    padding-left: calc(var(--sidebar-width) + 1rem); /* Ensure padding aligns with the content */
   }
 
-  .app-header-right {
-    @apply mt-4;
+  .app-sidebar.collapsed ~ .app-header {
+    margin-left: var(--sidebar-width-collapsed); /* Adjust header when sidebar is collapsed */
+    padding-left: calc(var(--sidebar-width-collapsed) + 1rem); /* Adjust padding for collapsed state */
+  }
+
+  .app-name {
+    @apply text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600;
+    font-family: 'Baloo Paaji 2', sans-serif;
+  }
+
+  .mode-switch {
+    @apply p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 rounded-full transition-colors duration-300;
   }
 
   .search-wrapper {
-    @apply max-w-full;
+    @apply relative flex items-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 transition-colors duration-300;
   }
 
-  .project-boxes {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Utility Classes */
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .search-input {
+    @apply flex-1 bg-transparent border-none outline-none placeholder-gray-500 dark:placeholder-gray-300;
   }
 
-  .transition-all-ease {
-    transition: all var(--transition-speed) ease;
+  .search-icon {
+    @apply absolute left-4 text-gray-500 dark:text-gray-300;
   }
 
   .hover-scale {
-    @apply transition-transform duration-200;
+    @apply transition-transform duration-200 hover:scale-105;
   }
 
-  .hover-scale:hover {
-    transform: scale(1.05);
+  .dashboard {
+    @apply min-h-screen flex flex-col;
+    margin-left: var(--sidebar-width); /* Offset content based on sidebar */
   }
 
-  .focus-outline {
-    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 transition-transform duration-300 hover:-translate-y-1;
   }
-} 
+
+  .toast {
+    @apply fixed top-5 right-5 bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-4 rounded-lg shadow-lg z-50 transition-opacity duration-300;
+  }
+
+  .modal {
+    @apply bg-white dark:bg-gray-800 p-8 rounded-lg w-full max-w-md mx-auto shadow-xl;
+  }
+
+  .progress-bar {
+    @apply bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden;
+  }
+
+  .progress-bar-inner {
+    @apply bg-blue-500 h-2 transition-all duration-300;
+  }
+
+  .calendar {
+    @apply bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md;
+  }
+
+  .tabs {
+    @apply flex justify-between mb-6;
+  }
+
+  .tab {
+    @apply px-4 py-2 cursor-pointer bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200;
+  }
+
+  .tab.active {
+    @apply bg-blue-500 text-white;
+  }
+
+  .tab:hover {
+    @apply bg-gray-300 dark:bg-gray-600;
+  }
+}

@@ -1,6 +1,6 @@
 // src/types/project.ts
 export interface Project {
-    id: string;
+    id: number; // Change from string to number
     name: string;
     description: string;
     created_at: string;
@@ -11,3 +11,4 @@ export interface Project {
     progress: number;
     dueDate: string;
   }
+  
