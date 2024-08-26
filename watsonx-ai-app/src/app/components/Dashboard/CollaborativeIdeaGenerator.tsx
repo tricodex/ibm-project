@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useWatson } from '@/hooks/useWatson';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { FiUsers, FiZap, FiThumbsUp, FiThumbsDown } from 'react-icons/fi';
 
 interface Idea {
@@ -50,13 +50,9 @@ const CollaborativeIdeaGenerator: React.FC = () => {
     );
   };
 
-  useEffect(() => {
-    if (ideas.length > 0) {
-      generateTeamFeedback();
-    }
-  }, [ideas]);
+  const generateTeamFeedback = useCallback(async () => {
+    if (ideas.length === 0) return;
 
-  const generateTeamFeedback = async () => {
     const topIdea = ideas.reduce((prev, current) => (prev.votes > current.votes) ? prev : current);
     const prompt = `Based on the following top-voted idea for our ${topic} project:
     ${topIdea.content}
@@ -74,48 +70,57 @@ const CollaborativeIdeaGenerator: React.FC = () => {
     });
 
     setTeamFeedback(response?.generated_text || '');
-  };
+  }, [generateText, ideas, topic]);
+
+  useEffect(() => {
+    if (ideas.length > 0) {
+      generateTeamFeedback();
+    }
+  }, [ideas, generateTeamFeedback]);
 
   return (
-    <Card title="Collaborative Idea Generator" className="mb-6">
-      <div className="flex items-center space-x-2 mb-4">
-        <input
-          type="text"
-          value={topic}
-          onChange={(e) => setTopic(e.target.value)}
-          placeholder="Enter project topic..."
-          className="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <Button onClick={generateIdeas} disabled={isLoading || !topic}>
-          <FiZap className="mr-2" /> Generate Ideas
-        </Button>
-      </div>
-      <div className="space-y-4">
-        {ideas.map((idea) => (
-          <div key={idea.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-            <p className="text-sm mb-2">{idea.content}</p>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Button size="sm" onClick={() => voteIdea(idea.id, 1)}>
-                  <FiThumbsUp />
-                </Button>
-                <Button size="sm" onClick={() => voteIdea(idea.id, -1)}>
-                  <FiThumbsDown />
-                </Button>
-                <span className="text-sm font-semibold">{idea.votes} votes</span>
+    <Card className="mb-6">
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-4">Collaborative Idea Generator</h2>
+        <div className="flex items-center space-x-2 mb-4">
+          <input
+            type="text"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            placeholder="Enter project topic..."
+            className="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <Button onClick={generateIdeas} disabled={isLoading || !topic}>
+            <FiZap className="mr-2" /> Generate Ideas
+          </Button>
+        </div>
+        <div className="space-y-4">
+          {ideas.map((idea) => (
+            <div key={idea.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+              <p className="text-sm mb-2">{idea.content}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Button size="sm" onClick={() => voteIdea(idea.id, 1)}>
+                    <FiThumbsUp />
+                  </Button>
+                  <Button size="sm" onClick={() => voteIdea(idea.id, -1)}>
+                    <FiThumbsDown />
+                  </Button>
+                  <span className="text-sm font-semibold">{idea.votes} votes</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-      {teamFeedback && (
-        <div className="mt-6 bg-blue-50 dark:bg-blue-900 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold mb-2 flex items-center">
-            <FiUsers className="mr-2" /> AI Team Feedback
-          </h3>
-          <p className="text-sm">{teamFeedback}</p>
+          ))}
         </div>
-      )}
+        {teamFeedback && (
+          <div className="mt-6 bg-blue-50 dark:bg-blue-900 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2 flex items-center">
+              <FiUsers className="mr-2" /> AI Team Feedback
+            </h3>
+            <p className="text-sm">{teamFeedback}</p>
+          </div>
+        )}
+      </div>
     </Card>
   );
 };

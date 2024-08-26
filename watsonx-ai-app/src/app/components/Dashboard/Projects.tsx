@@ -2,7 +2,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '@/types/project';
 import {
   Card,
@@ -14,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { DataTable } from '@/app/components/ui/datatable';
+import DataTable, { Column } from '@/app/components/ui/datatable';
 import {
   Select,
   SelectTrigger,
@@ -24,12 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { FiList, FiGrid, FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi';
 import styles from './Projects.module.css';
 
@@ -90,32 +84,32 @@ const Projects: React.FC = () => {
     setEditingProject(null);
   };
 
-  const tableColumns = [
-    { header: 'ID', accessor: 'id' as keyof Project },
-    { header: 'Name', accessor: 'name' as keyof Project },
-    { header: 'Status', accessor: 'status' as keyof Project },
+  const tableColumns: Column<Project>[] = [
+    { header: 'ID', accessor: 'id' },
+    { header: 'Name', accessor: 'name' },
+    { header: 'Status', accessor: 'status' },
     {
       header: 'Progress',
-      accessor: 'progress' as keyof Project,
-      cell: ({ row }: { row: { original: Project } }) => (
-        <Progress value={row.original.progress} />
-      ),
+      accessor: 'progress',
+      render: (value) => <Progress value={Number(value)} />,  // Ensure value is a number
     },
-    { header: 'Due Date', accessor: 'dueDate' as keyof Project },
+    { header: 'Due Date', accessor: 'dueDate' },
     {
       header: 'Actions',
-      cell: ({ row }: { row: { original: Project } }) => (
+      accessor: 'id',  // Dummy accessor for the Actions column
+      render: (_, project) => (
         <div className={styles.actionButtons}>
-          <Button variant="outline" size="sm" onClick={() => handleEditProject(row.original)}>
+          <Button variant="outline" size="sm" onClick={() => handleEditProject(project)}>
             <FiEdit size={16} />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => handleDeleteProject(row.original.id)}>
+          <Button variant="outline" size="sm" onClick={() => handleDeleteProject(project.id)}>
             <FiTrash2 size={16} />
           </Button>
         </div>
       ),
     },
   ];
+  
 
   return (
     <TooltipProvider>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ChevronUpIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 
-interface Column<T> {
+export interface Column<T> {
   header: string
   accessor: keyof T & string // Add the & string constraint to ensure accessor is a string
   render?: (value: T[keyof T], item: T) => React.ReactNode

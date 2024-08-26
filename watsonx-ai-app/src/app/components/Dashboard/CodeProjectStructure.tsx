@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import Textarea from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Toast, ToastProvider, ToastViewport } from '@/app/components/ui/toast';
@@ -120,50 +120,10 @@ const CodeProjectStructure: React.FC = () => {
   };
 
   const renderTree = (nodes: FileNode[]) => (
-    <Tree>
-      {nodes.map((node) => (
-        <TreeItem
-          key={node.id}
-          icon={node.type === 'folder' ? <FiFolder /> : <FiFile />}
-          label={
-            <div className={styles.treeItemLabel}>
-              <span>{node.name}</span>
-              <div className={styles.treeItemActions}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" onClick={() => handleEditNode(node)}>
-                      <FiEdit />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteNode(node.id)}>
-                      <FiTrash2 />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-                {node.type === 'folder' && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="sm" onClick={() => handleAddNode(node.id)}>
-                        <FiPlus />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Add</TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
-            </div>
-          }
-          onClick={() => handleNodeSelect(node)}
-        >
-          {node.children && renderTree(node.children)}
-        </TreeItem>
-      ))}
-    </Tree>
+    <Tree
+      nodes={nodes}
+      onNodeSelect={handleNodeSelect}
+    />
   );
 
   return (
@@ -192,8 +152,10 @@ const CodeProjectStructure: React.FC = () => {
                   <TabsContent value="content">
                     {selectedNode && selectedNode.type === 'file' ? (
                       <CodePreview
-                        code={selectedNode.content || ''}
-                        language="javascript"
+                        html={selectedNode.content || ''}
+                        css=""
+                        js=""
+                        preview={<div>{selectedNode.content}</div>}
                       />
                     ) : (
                       <p>Select a file to view its content</p>
@@ -212,7 +174,7 @@ const CodeProjectStructure: React.FC = () => {
             </div>
           </CardContent>
           <CardFooter>
-            <Alert>
+            <Alert variant="default" x={undefined}>
               <AlertTitle>Tip</AlertTitle>
               <AlertDescription>
                 Use AI suggestions to optimize your project structure and improve code organization.
@@ -252,7 +214,7 @@ const CodeProjectStructure: React.FC = () => {
         {toastMessage && (
           <Toast
             title="Notification"
-            description={toastMessage}
+            content={toastMessage}
             onOpenChange={(open) => {
               if (!open) setToastMessage('');
             }}

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import Textarea from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Toast, ToastProvider, ToastViewport } from '@/app/components/ui/toast';
@@ -29,7 +29,11 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/
 import { FiCode, FiCpu, FiList, FiClock, FiTool, FiBriefcase, FiZap } from 'react-icons/fi';
 import styles from './AIAssistant.module.css';
 
-const AIAssistant: React.FC = () => {
+interface AIAssistantProps {
+  onGenerateInsights: (context: string, modelId?: WatsonModelId) => Promise<string>;
+}
+
+const AIAssistant: React.FC<AIAssistantProps> = ({ onGenerateInsights }) => {
   const {
     generateCodeSnippet,
     getCodeSuggestions,
@@ -197,10 +201,7 @@ const AIAssistant: React.FC = () => {
                 <ScrollArea className={styles.outputArea}>
                   {activeTab === 'code' ? (
                     <CodePreview
-                      code={output}
-                      language="javascript"
-                      onCopy={handleCopy}
-                    />
+                    html={''} css={''} js={''} preview={undefined} {...{ code: output, language: "javascript", onCopy: handleCopy }}                    />
                   ) : (
                     <pre>{output}</pre>
                   )}
@@ -216,7 +217,7 @@ const AIAssistant: React.FC = () => {
             </Tabs>
           </CardContent>
           <CardFooter>
-            <Alert>
+            <Alert x={undefined}>
               <AlertTitle>AI Assistant Tips</AlertTitle>
               <AlertDescription>
                 Use clear and specific prompts for better results. Experiment with different models and settings in advanced mode.
@@ -252,7 +253,7 @@ const AIAssistant: React.FC = () => {
         {toastMessage && (
           <Toast
             title="Notification"
-            description={toastMessage}
+            content={toastMessage}
             onOpenChange={(open) => {
               if (!open) setToastMessage('');
             }}

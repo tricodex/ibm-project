@@ -40,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
           <div className="flex items-center">
             <div className="w-11 h-11 bg-blue-500 rounded-lg flex items-center justify-center text-xl font-bold mr-3">
               <Image
-                src="/granix2.png"
+                src="/granix6.png"
                 alt="Granite"
                 width={40}
                 height={40}

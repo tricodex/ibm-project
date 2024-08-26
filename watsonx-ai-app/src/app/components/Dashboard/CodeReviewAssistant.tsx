@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useWatson } from '@/hooks/useWatson';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { FiGitPullRequest, FiAlertCircle, FiCheckCircle, FiCode } from 'react-icons/fi';
 
 interface CodeChange {

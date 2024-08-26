@@ -48,8 +48,8 @@ const MessageSection: React.FC = () => {
   return (
     <div className={`${styles.messageSection} ${isCollapsed ? styles.collapsed : ''}`}>
       <div className={styles.header}>
-      <h1 className="app-name">granix</h1>
-      <p className={styles.title}> code</p>
+      <span className="app-name">granix</span>
+      <span className="app-name text-white">code</span>
         <div className={styles.controls}>
           <button className={styles.collapseButton} onClick={() => setIsCollapsed(!isCollapsed)}>
             {isCollapsed ? <FiChevronDown size={20} /> : <FiChevronUp size={20} />}

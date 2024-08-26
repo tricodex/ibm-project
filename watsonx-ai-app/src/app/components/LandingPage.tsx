@@ -1,179 +1,134 @@
 'use client';
+
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { gsap } from 'gsap';
-import { Flip } from 'gsap/all';
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './LandingPage.module.css';
 
-gsap.registerPlugin(Flip);
-
 const LandingPage: React.FC = () => {
-  // Refs and state setup
   const gridRef = useRef<HTMLDivElement>(null);
-  const fullviewRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const enterButtonRef = useRef<HTMLButtonElement>(null);
-  const [winsize, setWinsize] = useState({ width: 0, height: 0 });
-  const [mousepos, setMousepos] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [targetPos, setTargetPos] = useState({ x: 0, y: 0 });
 
-  // Grid configuration
-  const numRows = 5;
-  const numItemsPerRow = 7;
-  const middleRowIndex = Math.floor(numRows / 2);
-  const middleItemIndex = Math.floor(numItemsPerRow / 2);
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    setTargetPos({ x: e.clientX, y: e.clientY });
+  }, []);
 
-  // Image paths
-  const images = Array.from({ length: numRows * numItemsPerRow }, (_, i) => `/lp-images/image${(i % 20) + 1}.png`);
-
-  // Window size and mouse position update handlers
-  const updateWinsize = useCallback(() => setWinsize({ width: window.innerWidth, height: window.innerHeight }), []);
-  const updateMousepos = useCallback((ev: MouseEvent) => setMousepos({ x: ev.clientX, y: ev.clientY }), []);
-
-  // Event listeners setup
   useEffect(() => {
-    updateWinsize();
-    window.addEventListener('resize', updateWinsize);
-    window.addEventListener('mousemove', updateMousepos);
+    window.addEventListener('mousemove', handleMouseMove);
     return () => {
-      window.removeEventListener('resize', updateWinsize);
-      window.removeEventListener('mousemove', updateMousepos);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [updateWinsize, updateMousepos]);
+  }, [handleMouseMove]);
 
-  // Main animation effect
+  const lerp = (start: number, end: number, factor: number) => {
+    return start + (end - start) * factor;
+  };
+
   useEffect(() => {
     if (!gridRef.current) return;
 
-    const gridRows = gridRef.current.querySelectorAll(`.${styles.row}`);
-    const middleRowItemInner = gridRows[middleRowIndex].querySelectorAll(`.${styles.row__item}`)[middleItemIndex].querySelector(`.${styles.row__item_inner}`);
+    const grid = gridRef.current;
+    const items = Array.from(grid.children) as HTMLElement[];
+    const rows = 5;
+    const cols = 7;
 
-    // Animation parameters
-    const baseAmt = 0.1;
-    const minAmt = 0.05;
-    const maxAmt = 0.1;
+    let animationFrameId: number;
 
-    // Initialize styles for each row
-    const renderedStyles = Array.from({ length: numRows }, (_, index) => {
-      const distanceFromMiddle = Math.abs(index - middleRowIndex);
-      const amt = Math.max(baseAmt - distanceFromMiddle * 0.03, minAmt);
-      const scaleAmt = Math.min(baseAmt + distanceFromMiddle * 0.03, maxAmt);
-      return { amt, scaleAmt, translateX: { previous: 0, current: 0 }, contrast: { previous: 100, current: 100 }, brightness: { previous: 100, current: 100 } };
-    });
+    const animate = () => {
+      setMousePos(prevPos => ({
+        x: lerp(prevPos.x, targetPos.x, 0.1),
+        y: lerp(prevPos.y, targetPos.y, 0.1)
+      }));
 
-    // Animation render loop
-    let rafId: number;
-    const render = () => {
-      const mappedX = (((mousepos.x / winsize.width) * 2 - 1) * 40 * winsize.width) / 100;
-      const mappedContrast = 100 - Math.pow(Math.abs((mousepos.x / winsize.width) * 2 - 1), 2) * (100 - 330);
-      const mappedBrightness = 100 - Math.pow(Math.abs((mousepos.x / winsize.width) * 2 - 1), 2) * (100 - 15);
+      const { x, y } = mousePos;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      
+      items.forEach((item, index) => {
+        const row = Math.floor(index / cols);
+        const col = index % cols;
+        const itemX = (col + 0.5) * (window.innerWidth / cols);
+        const itemY = (row + 0.5) * (window.innerHeight / rows);
 
-      gridRows.forEach((row, index) => {
-        const style = renderedStyles[index];
-        style.translateX.current = mappedX;
-        style.contrast.current = mappedContrast;
-        style.brightness.current = mappedBrightness;
+        const distX = x - itemX;
+        const distY = y - itemY;
+        const distance = Math.sqrt(distX * distX + distY * distY);
+        const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
 
-        style.translateX.previous = gsap.utils.interpolate(style.translateX.previous, style.translateX.current, style.amt);
-        style.contrast.previous = gsap.utils.interpolate(style.contrast.previous, style.contrast.current, style.amt);
-        style.brightness.previous = gsap.utils.interpolate(style.brightness.previous, style.brightness.current, style.amt);
+        const scale = 1 + (1 - Math.min(distance / maxDistance, 1)) * 0.2;
+        const translateX = distX * 0.02;
+        const translateY = distY * 0.02;
 
-        gsap.set(row, {
-          x: style.translateX.previous,
-          filter: `contrast(${style.contrast.previous}%) brightness(${style.brightness.previous}%)`
-        });
+        item.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        item.style.opacity = (1 - distance / maxDistance).toString();
       });
 
-      rafId = requestAnimationFrame(render);
+      animationFrameId = requestAnimationFrame(animate);
     };
 
-    render();
+    animate();
 
-    // Fullview transition
-    const enterFullview = () => {
-      if (!middleRowItemInner || !fullviewRef.current || !contentRef.current || !gridRef.current) return;
-
-      const flipstate = Flip.getState(middleRowItemInner);
-      fullviewRef.current.appendChild(middleRowItemInner);
-
-      const tl = gsap.timeline();
-
-      tl.add(Flip.from(flipstate, {
-        duration: 0.9,
-        ease: "power4",
-        absolute: true,
-        onComplete: () => cancelAnimationFrame(rafId)
-      }))
-        .to(gridRef.current, {
-          duration: 0.9,
-          ease: "power4",
-          opacity: 0.01
-        }, 0)
-        .to(middleRowItemInner.querySelector(`.${styles.row__item_img}`), {
-          scale: 1.2,
-          duration: 3,
-          ease: "sine"
-        }, "<-=0.45")
-        .to(contentRef.current, {
-          y: '-30vh',
-          duration: 0.9,
-          ease: "power4"
-        });
-
-      if (enterButtonRef.current) {
-        enterButtonRef.current.classList.add(styles.hidden);
-      }
-      document.body.classList.remove(styles.noscroll);
-    };
-
-    // Button event listener
-    const enterButton = enterButtonRef.current;
-    if (enterButton) {
-      enterButton.addEventListener('click', enterFullview);
-    }
-
-    // Cleanup
     return () => {
-      cancelAnimationFrame(rafId);
-      if (enterButton) {
-        enterButton.removeEventListener('click', enterFullview);
-      }
+      cancelAnimationFrame(animationFrameId);
     };
-  }, [mousepos, winsize]);
+  }, [mousePos, targetPos]);
 
   return (
-    
     <div className={styles.app}>
-        
-      <main>
-        <section className={styles.intro}>
-
-          <div className={styles.grid} ref={gridRef}>
-            {Array.from({ length: numRows }).map((_, rowIndex) => (
-              <div className={styles.row} key={rowIndex}>
-                {Array.from({ length: numItemsPerRow }).map((_, itemIndex) => (
-                  <div className={styles.row__item} key={itemIndex}>
-                    <div className={styles.row__item_inner}>
-                      <div
-                        className={`${styles.row__item_img} ${rowIndex === middleRowIndex && itemIndex === middleItemIndex ? styles.row__item_img_large : ''}`}
-                        style={{ 
-                          backgroundImage: `url(${images[rowIndex * numItemsPerRow + itemIndex]})`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
+      <header className={styles.header}>
+        <div className="flex items-center">
+          <span className="w-11 h-11 bg-blue-500 rounded-lg flex items-center justify-center text-xl font-bold mr-3">
+            <Image
+              src="/granix5.png"
+              alt="Granite"
+              width={40}
+              height={40}
+            />
+          </span>
+          <span className="app-name">granix</span>
+        </div>
+      </header>
+      <main className={styles.main}>
+        <div className={styles.content}>
+          <div className={styles.hero}>
+            <h2 className={`${styles.hero_title} flex items-center`}>
+              <span className="app-name font-extrabold text-3xl">manage</span>
+              <span className="app-name font-extrabold text-7xl text-white ml-2">PROJECTS</span>
+              <span className="w-11 h-11 bg-blue-500 rounded-lg flex items-center justify-center text-xl font-bold ml-3">
+                <Image
+                  src="/granix5.png"
+                  alt="Granite"
+                  width={40}
+                  height={40}
+                />
+              </span>
+            </h2>
+            <p className={styles.hero_description}>
+              <span>Elevate your coding projects with </span><span className='app-name'>granix</span>, powered by IBM&apos;s Granite models. Seamlessly integrate AI-driven insights, collaborative tools, and intuitive project management to revolutionize your development workflow.
+            </p>
+            
+            <div className={styles.cta_container}>
+              <Link href="/dashboard">
+                <button className={styles.cta_button}>Try Now</button>
+              </Link>
+              <Link href="/about">
+                <button className={styles.cta_button_secondary}>About</button>
+              </Link>
+            </div>
           </div>
-          <div className={styles.fullview} ref={fullviewRef}></div>
-        </section>
-        <section className={styles.content} ref={contentRef}>
-          <div className={styles.content__nav}>
-            <Link href="/dashboard">
-              <button className={styles.enter}>Go to Dashboard</button>
-            </Link>
+          <div className={styles.image_grid}>
+            <Image src="/cloud.svg" alt="Cloud" width={100} height={100} />
+            <Image src="/tags.svg" alt="Tags" width={100} height={100} />
+            <Image src="/apps.svg" alt="Apps" width={100} height={100} />
+            <Image src="/folder.svg" alt="Folder" width={100} height={100} />
           </div>
-        </section>
+        </div>
+        <div className={styles.grid} ref={gridRef}>
+          {Array.from({ length: 35 }).map((_, index) => (
+            <div key={index} className={styles.grid_item} />
+          ))}
+        </div>
       </main>
     </div>
   );

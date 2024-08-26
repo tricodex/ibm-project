@@ -1,7 +1,7 @@
 // src/app/components/Dashboard/Analytics.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useWatson } from '@/hooks/useWatson';
 import {
   Card,
@@ -54,11 +54,7 @@ const Analytics: React.FC = () => {
   const [aiInsights, setAiInsights] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchAIInsights();
-  }, [selectedProject]);
-
-  const fetchAIInsights = async () => {
+  const fetchAIInsights = useCallback(async () => {
     setIsLoading(true);
     try {
       const insights = await generateProjectInsights(`Provide insights for ${selectedProject === 'all' ? 'all projects' : selectedProject}`);
@@ -68,7 +64,11 @@ const Analytics: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [generateProjectInsights, selectedProject]);
+
+  useEffect(() => {
+    fetchAIInsights();
+  }, [fetchAIInsights]);
 
   const calculateOverallProgress = () => {
     const totalCompleted = projectData.reduce((acc, project) => acc + project.completed, 0);
@@ -152,7 +152,7 @@ const Analytics: React.FC = () => {
                         <LineChart data={taskCompletionData}>
                           <XAxis dataKey="date" />
                           <YAxis />
-                          <Tooltip />
+                          <RechartsTooltip />
                           <Line type="monotone" dataKey="completed" stroke="#8884d8" />
                         </LineChart>
                       </ResponsiveContainer>
@@ -167,7 +167,7 @@ const Analytics: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip />
+                    <RechartsTooltip />
                     <Legend />
                     <Bar dataKey="completed" stackId="a" fill="#8884d8" />
                     <Bar dataKey="inProgress" stackId="a" fill="#82ca9d" />
@@ -193,7 +193,7 @@ const Analytics: React.FC = () => {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <RechartsTooltip />
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>
@@ -201,8 +201,8 @@ const Analytics: React.FC = () => {
 
               <TabsContent value="insights">
                 <ScrollArea className={styles.insightsArea}>
-                  <Alert>
-                    <AlertTitle>AI-Generated Insights</AlertTitle>
+                <Alert x={undefined}>
+                <AlertTitle>AI-Generated Insights</AlertTitle>
                     <AlertDescription>
                       {aiInsights || 'No insights available. Click "Refresh AI Insights" to generate.'}
                     </AlertDescription>
@@ -212,8 +212,8 @@ const Analytics: React.FC = () => {
             </Tabs>
           </CardContent>
           <CardFooter>
-            <Alert>
-              <AlertTitle>Analytics Tip</AlertTitle>
+          <Alert x={undefined}>
+          <AlertTitle>Analytics Tip</AlertTitle>
               <AlertDescription>
                 Use the AI Insights tab to get personalized recommendations based on your project data.
               </AlertDescription>
